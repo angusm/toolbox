@@ -1,6 +1,6 @@
 const areEqual = require('../../are-equal');
 const getOffsetAncestors = require('./get-offset-ancestors');
-const zip = require('../../iterable/zip');
+const zip = require('.././zip');
 
 function getCommonOffsetAncestor(...elements) {
     const reversedAncestorLists =
