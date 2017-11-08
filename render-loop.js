@@ -9,12 +9,6 @@ const STEP_ORDER = Object.freeze([Step.MEASURE, Step.MUTATE]);
 
 const scheduledFns_ = new DynamicDefaultMap(() => new Map());
 
-function addFnToStep(fn, step) {
-    const renderFn = new RenderFunction(step);
-    scheduledFns_.get(step).set(renderFn, fn);
-    return renderFn;
-}
-
 class RenderFunction {
     constructor (step) {
         this.step_ = step;
@@ -35,13 +29,19 @@ class RenderLoop {
     }
 }
 
-function runLoop() {
-    STEP_ORDER.forEach((step) => runFnsForStep(step));
-    window.requestAnimationFrame(runLoop);
+function addFnToStep(fn, step) {
+    const renderFn = new RenderFunction(step);
+    scheduledFns_.get(step).set(renderFn, fn);
+    return renderFn;
 }
 
 function runFnsForStep(step) {
     scheduledFns_.get(step).values().forEach((fn) => fn());
+}
+
+function runLoop() {
+    STEP_ORDER.forEach((step) => runFnsForStep(step));
+    window.requestAnimationFrame(runLoop);
 }
 
 runLoop();
