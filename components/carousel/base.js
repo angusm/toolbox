@@ -5,6 +5,6 @@ class Carousel {
     }
 
     getActiveSlide() {
-
+        return
     }
 }
