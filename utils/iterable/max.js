@@ -1,5 +1,5 @@
 function max(iterable, scoreFn) {
-    return iterable.reduce(([result, maxScore], value) => {
+    return [...iterable].reduce(([result, maxScore], value) => {
         const score = scoreFn(value);
         if (
             (result === undefined && maxScore === undefined) ||
