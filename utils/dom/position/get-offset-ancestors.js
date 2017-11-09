@@ -1,6 +1,9 @@
-function getOffsetAncestors(element) {
+function getOffsetAncestors(element, terminusAncestor = null) {
     const result = [element];
-    while (element = element.offsetParent) {
+    while (
+        element.offsetParent !== terminusAncestor &&
+        (element = element.offsetParent)
+    ) {
         result.push(element);
     }
     return result;

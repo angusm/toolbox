@@ -1,3 +1,4 @@
+const Matrix = require('../../dom/position/matrix');
 const Vector = require('./vector');
 
 class Vector2d extends Vector {
@@ -15,6 +16,14 @@ class Vector2d extends Vector {
 
     static fromElementOffset(element) {
         return new Vector2d(element.offsetLeft, element.offsetTop);
+    }
+
+    static fromMatrix(matrix) {
+        return new Vector2d(matrix.translateX, matrix.translateY);
+    }
+
+    static fromElementTransform(element) {
+        return Vector2d.fromMatrix(Matrix.fromElementTransform(element));
     }
 }
 
