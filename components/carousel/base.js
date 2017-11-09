@@ -9,4 +9,10 @@ class Carousel {
     getActiveSlide() {
         return getMostVisibleElement(this.slides_, this.container_);
     }
+
+    getSlides() {
+        return this.slides_;
+    }
 }
+
+module.exports = Carousel;
