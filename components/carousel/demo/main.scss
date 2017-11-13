@@ -1,0 +1,50 @@
+@mixin flex-center() {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel {
+  height: 350px;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.carousel__nav {
+  @include flex-center();
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+  li {
+    @include flex-center();
+    display: inline-flex;
+    font-size: 20px;
+    height: 50px;
+    width: 50px;
+
+    &.active {
+      color: red;
+    }
+  }
+}
+
+.carousel__slide {
+  @include flex-center();
+  display: inline-flex;
+  font-size: 20px;
+  height: 100%;
+  width: 100%;
+
+  &:nth-child(even) {
+    background: #DDD;
+  }
+
+  &:nth-child(odd) {
+    background: #BBB;
+  }
+}
