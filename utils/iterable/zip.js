@@ -1,5 +1,5 @@
-function zip() {
-    return [...arguments].reduce(
+function zip(...lists) {
+    return [...lists].reduce(
         (result, list) => {
             list.forEach(
                 (listItem, index) => {

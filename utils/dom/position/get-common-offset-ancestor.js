@@ -1,6 +1,6 @@
 const areEqual = require('../../are-equal');
 const getOffsetAncestors = require('./get-offset-ancestors');
-const zip = require('.././zip');
+const zip = require('../../iterable/zip');
 
 function getCommonOffsetAncestor(...elements) {
     const reversedAncestorLists =
@@ -11,9 +11,11 @@ function getCommonOffsetAncestor(...elements) {
 
 function getLastMatchingIndex(...lists) {
     const zippedValues = zip(lists);
-    let matchIndex = -1;
-    while (areEqual(...zippedValues[matchIndex + 1])) {
-        matchIndex++;
+    let matchIndex;
+    for (matchIndex = 0; matchIndex < zippedValues.length; matchIndex++) {
+        if (!areEqual(...zippedValues[matchIndex])) {
+            return matchIndex - 1;
+        }
     }
     return matchIndex;
 }

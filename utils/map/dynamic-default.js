@@ -1,5 +1,7 @@
-class DynamicDefaultMap extends Map {
-    constructor(iterable, defaultFunction) {
+const MapWrapper = require('./map-wrapper');
+
+class DynamicDefaultMap extends MapWrapper {
+    constructor(iterable = [], defaultFunction = doNothing) {
         super(iterable);
         this.defaultFunction_ = defaultFunction;
     }
@@ -9,6 +11,10 @@ class DynamicDefaultMap extends Map {
             this.set(key, this.defaultFunction_(key));
         }
         return super.get(key);
+    }
+
+    static usingFunction(defaultFunction) {
+        return new DynamicDefaultMap([], defaultFunction);
     }
 }
 

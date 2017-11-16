@@ -1,5 +1,5 @@
-const Carousel = require('./carousel');
-const DynamicDefaultMap = require('./map/dynamic-default');
+const Carousel = require('./base');
+const DynamicDefaultMap = require('../../utils/map/dynamic-default');
 const RenderLoop = require('../../utils/render-loop');
 
 const DefaultClass = Object.freeze({
@@ -13,11 +13,11 @@ function createDefaultNavItem(slide) {
 }
 
 class CarouselNav {
-    constructor(carousel, navElement, createNavItemFn=createDefaultNavItem()) {
+    constructor(carousel, navElement, createNavItemFn=createDefaultNavItem) {
         this.carousel_ = carousel;
         this.navElement_ = navElement;
         this.navItems_ =
-            new DynamicDefaultMap((slide) => createNavItemFn(slide));
+            DynamicDefaultMap.usingFunction((slide) => createNavItemFn(slide));
         this.init_();
     }
 

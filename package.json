@@ -1,0 +1,31 @@
+{
+  "name": "toolbox",
+  "version": "1.0.0",
+  "description": "Useful things in VanillaJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angusm/toolbox.git"
+  },
+  "author": "Angus MacDonald",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/angusm/toolbox/issues"
+  },
+  "homepage": "https://github.com/angusm/toolbox#readme",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0",
+    "buffer": "^5.0.8",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

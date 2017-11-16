@@ -10,32 +10,36 @@ class Vector {
         const values = vectors.map((vector) => vector.getValues());
         const summedValues =
             zip(...values).map((zippedVals) => sum(...zippedVals));
-        return new Vector(...summedValues);
+        return new this[Symbol.species](...summedValues);
     }
 
     add(...vectors) {
-        return Vector.add(this, ...vectors);
+        return this.constructor.add(this, ...vectors);
     }
 
     static invert(vector) {
-        return new Vector(...vector.getValues().map((val) => -val));
+        return new this[Symbol.species](...vector.getValues().map((val) => -val));
     }
 
     invert() {
-        return Vector.invert(this);
+        return this.constructor.invert(this);
     }
 
     static subtract(minuend, ...subtrahends) {
-        return Vector.add(
+        return this.add(
             minuend, ...subtrahends.map((subtrahend) => subtrahend.invert()));
     }
 
     subtract(...subtrahends) {
-        return Vector.subtract(this, ...subtrahends);
+        return this.constructor.subtract(this, ...subtrahends);
     }
 
     getValues() {
         return this.values_;
+    }
+
+    static get [Symbol.species]() {
+        return this;
     }
 }
 

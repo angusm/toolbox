@@ -1,3 +1,5 @@
-/**
- * Created by angusm on 12/11/17.
- */
+function isDef(value) {
+    return typeof value !== 'undefined';
+}
+
+module.exports = isDef;

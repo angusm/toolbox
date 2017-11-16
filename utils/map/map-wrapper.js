@@ -1,17 +1,63 @@
-const MapWrapper = require('./map-wrapper');
+const isDef = require('../is-def');
 
-class DynamicDefaultMap extends MapWrapper {
-    constructor(iterable, defaultFunction) {
-        super(iterable);
-        this.defaultFunction_ = defaultFunction;
+class MapWrapper {
+    constructor(iterable = []) {
+        this.map_ = new Map();
+        [...iterable].forEach(([key, value]) => this.map_.set(key, value));
     }
 
     get(key) {
-        if (!this.has(key)) {
-            this.set(key, this.defaultFunction_(key));
-        }
-        return super.get(key);
+        return this.map_.get(key);
+    }
+
+    get length() {
+        return this.map_.length;
+    }
+
+    get size() {
+        return this.map_.size;
+    }
+
+    claer() {
+        return this.map_.clear();
+    }
+
+    delete(key) {
+        return this.map_.delete(key);
+    }
+
+    entries() {
+        return this.map_.entries();
+    }
+
+    forEach(callbackFn, thisArg = undefined) {
+        const finalThisArg = isDef(thisArg) ? thisArg : this.map_;
+        return this.map_.forEach(callbackFn, finalThisArg);
+    }
+
+    get(key) {
+        return this.map_.get(key);
+    }
+
+    has(key) {
+        return this.map_.has(key);
+    }
+
+    keys() {
+        return this.map_.keys();
+    }
+
+    set(key, value) {
+        return this.map_.set(key, value);
+    }
+
+    values() {
+        return this.map_.values();
+    }
+
+    [Symbol.iterator]() {
+        return this.map_[Symbol.iterator]();
     }
 }
 
-module.exports = DynamicDefaultMap;
+module.exports = MapWrapper;

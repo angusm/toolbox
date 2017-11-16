@@ -1,4 +1,4 @@
-const Vector2d = require('.././geometry/vector-2d');
+const Vector2d = require('../../math/geometry/vector-2d');
 
 function accumulateValueFromAncestor(element, ancestor, valueFn) {
     let result = Vector2d.fromElementOffset(element);
