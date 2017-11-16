@@ -11,6 +11,15 @@
   padding: 0;
   width: 100%;
   white-space: nowrap;
+
+  &--fade {
+    position: relative;
+    .carousel__slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
 }
 
 .carousel__nav {
