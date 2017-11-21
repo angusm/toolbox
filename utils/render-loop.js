@@ -7,7 +7,7 @@ const Step = Object.freeze({
 
 const STEP_ORDER = Object.freeze([Step.MEASURE, Step.MUTATE]);
 
-const FPS = 1;
+const FPS = 60;
 
 class RenderFunction {
     constructor (step) {
