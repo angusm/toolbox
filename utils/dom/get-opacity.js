@@ -1,3 +1,5 @@
-/**
- * Created by angusm on 16/11/17.
- */
+function getOpacity(element) {
+    return parseFloat(element.style.opacity);
+}
+
+module.exports = getOpacity;

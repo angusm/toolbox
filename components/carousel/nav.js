@@ -1,36 +1,44 @@
 const Carousel = require('./base');
 const DynamicDefaultMap = require('../../utils/map/dynamic-default');
-const RenderLoop = require('../../utils/render-loop');
+const areListValuesEqual = require('../../utils/iterable/are-list-values-equal');
+const renderLoop = require('../../utils/render-loop');
 
 const DefaultClass = Object.freeze({
     ACTIVE_NAV_ITEM: 'active',
 });
 
-function createDefaultNavItem(slide) {
-    const element = document.createElement('li');
-    element.innerHTML = '.';
-    return element;
-}
+const CacheKey = Object.freeze({
+    SLIDES: Symbol('Slides'),
+});
 
 class CarouselNav {
-    constructor(carousel, navElement, createNavItemFn=createDefaultNavItem) {
+    constructor(
+        carousel,
+        navElement,
+        {
+            createNavItemFn=CarouselNav.createDefaultNavItem
+        } = {}
+    ) {
         this.carousel_ = carousel;
         this.navElement_ = navElement;
         this.navItems_ =
-            DynamicDefaultMap.usingFunction((slide) => createNavItemFn(slide));
+            DynamicDefaultMap.usingFunction(
+                (slide) => createNavItemFn(slide, carousel));
+        this.renderCache_ = new Map();
         this.init_();
     }
 
     init_() {
-        RenderLoop.measure(() => this.render_());
+        renderLoop.measure(() => this.render_());
     }
 
     render_() {
         const activeSlide = this.carousel_.getActiveSlide();
-        RenderLoop.mutate(() => {
+        renderLoop.mutate(() => {
+            if (this.getNavItemsToDisplay_() )
             this.resetNavItems_();
             this.markActiveNavItem(activeSlide);
-            RenderLoop.measure(() => this.render_());
+            renderLoop.measure(() => this.render_());
         });
     }
 
@@ -49,6 +57,14 @@ class CarouselNav {
     markActiveNavItem(activeSlide) {
         this.navItems_.get(activeSlide)
             .classList.add(DefaultClass.ACTIVE_NAV_ITEM);
+    }
+
+    static createDefaultNavItem(slide, carousel) {
+        const element = document.createElement('li');
+        element.innerHTML = '.';
+        element.addEventListener(
+            'click', () => carousel.transitionToSlide(slide));
+        return element;
     }
 }
 
