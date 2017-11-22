@@ -1,7 +1,9 @@
-.accordion__content {
-  display: none;
+.accordion__item {
+  .accordion__content {
+    display: none;
+  }
 
-  &--visible {
+  &--visible .accordion__content {
     display: block;
   }
 }

@@ -1,4 +1,5 @@
 const renderLoop = require('../../utils/render-loop');
+const zip = require('../../utils/iterable/zip');
 
 const Class = Object.freeze({
     CONTAINER: 'accordion',
@@ -13,9 +14,12 @@ const ClassModifier = Object.freeze({
 });
 
 class AccordionItem {
-    constructor(item, contentSelector, toggleSelector) {
-        this.content_ = item.querySelector(`.${contentSelector}`);
+    constructor(item, itemSelector, contentSelector, toggleSelector) {
         this.contentSelector_ = contentSelector;
+        this.itemSelector_ = itemSelector;
+        this.toggleSelector_ = toggleSelector;
+        this.content_ = item.querySelector(`.${contentSelector}`);
+        this.item_ = item;
         this.toggle_ = item.querySelector(`.${toggleSelector}`);
         this.init_();
     }
@@ -24,40 +28,73 @@ class AccordionItem {
         this.toggle_.addEventListener('click', () => this.toggleVisibility());
     }
 
-    getModifiedContentClass_(classModifier) {
-        return `${this.contentSelector_}--${classModifier}`;
+    static getModifiedClass_(selector, classModifier) {
+        return `${selector}--${classModifier}`;
     }
 
-    getVisibleClass() {
-        return this.getModifiedContentClass_(ClassModifier.VISIBLE);
+    static getVisibleClass_(selector) {
+        return AccordionItem.getModifiedClass_(selector, ClassModifier.VISIBLE);
     }
 
-    getHiddenClass() {
-        return this.getModifiedContentClass_(ClassModifier.HIDDEN);
+    static getHiddenClass_(selector) {
+        return AccordionItem.getModifiedClass_(selector, ClassModifier.HIDDEN);
+    }
+
+    getElements_() {
+        return [this.content_, this.item_, this.toggle_];
+    }
+
+    getSelectors_() {
+        return [
+            this.contentSelector_, this.itemSelector_, this.toggleSelector_];
     }
 
     toggleVisibility() {
         renderLoop.measure(() => {
-            if (this.content_.classList.contains(this.getVisibleClass())) {
-                this.hideContent();
+            const visibleClass =
+                AccordionItem.getVisibleClass_(this.itemSelector_);
+            if (this.item_.classList.contains(visibleClass)) {
+                this.hide();
             } else {
-                this.showContent();
+                this.show();
             }
         });
     }
 
-    hideContent() {
-        renderLoop.mutate(() => {
-            this.content_.classList.remove(this.getVisibleClass());
-            this.content_.classList.add(this.getHiddenClass());
-        });
+    hide() {
+        renderLoop.mutate(
+            () => this.changeVisibility_(AccordionItem.hideElement_));
     }
 
-    showContent() {
-        renderLoop.mutate(() => {
-            this.content_.classList.add(this.getVisibleClass());
-            this.content_.classList.remove(this.getHiddenClass());
-        });
+    show() {
+        renderLoop.mutate(
+            () => this.changeVisibility_(AccordionItem.showElement_));
+    }
+
+    static hideElement_(element, selector) {
+        AccordionItem.switchClasses_(
+            element,
+            AccordionItem.getHiddenClass_(selector),
+            AccordionItem.getVisibleClass_(selector));
+    }
+
+    static showElement_(element, selector) {
+        AccordionItem.switchClasses_(
+            element,
+            AccordionItem.getVisibleClass_(selector),
+            AccordionItem.getHiddenClass_(selector));
+    }
+
+    static switchClasses_(element, classToAdd, classToRemove) {
+        element.classList.add(classToAdd);
+        element.classList.remove(classToRemove);
+    }
+
+    changeVisibility_(visibilityChangeFn) {
+        const zippedElementsAndSelectors =
+            zip(this.getElements_(), this.getSelectors_());
+        zippedElementsAndSelectors.forEach(
+            ([element, selector]) => visibilityChangeFn(element, selector));
     }
 }
 
@@ -78,7 +115,8 @@ class Accordion {
 
     static getItems(container, itemSelector, contentSelector, toggleSelector) {
         return [...container.querySelectorAll(`.${itemSelector}`)].map(
-            (item) => new AccordionItem(item, contentSelector, toggleSelector));
+            (item) => new AccordionItem(
+                item, itemSelector, contentSelector, toggleSelector));
     }
 }
 
