@@ -1,5 +1,6 @@
 function getOpacity(element) {
-    return parseFloat(element.style.opacity);
+    const parsedOpacity = parseFloat(element.style.opacity);
+    return isNaN(parsedOpacity) ? 1 : parsedOpacity;
 }
 
 module.exports = getOpacity;

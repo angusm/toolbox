@@ -1,6 +1,7 @@
 const FadeTransition = require('./transitions/fade');
 const getMostVisibleElement = require('../../utils/dom/position/get-most-visible-element');
 const getVisibleArea = require('../../utils/dom/position/get-visible-area');
+const isFullyVisible = require('../../utils/dom/position/is-fully-visible');
 const renderLoop = require('../../utils/render-loop');
 
 const defaultTransition = new FadeTransition();
@@ -28,12 +29,10 @@ class Carousel {
     }
 
     init_() {
-        console.log('INIT');
         this.render_();
     }
 
     render_() {
-        console.log('RENDER');
         renderLoop.measure(() => {
             this.removeCurrentlyActiveTransitionTargets_();
             if (this.getNextTransitionTarget_()) {
@@ -49,7 +48,14 @@ class Carousel {
     }
 
     isSlideFullyVisible_(slide) {
-        return getVisibleArea(slide, this.container_, this.factorInOpacity_);
+        const otherSlides =
+            this.getSlides().filter((otherSlide) => otherSlide !== slide);
+        return isFullyVisible(slide, this.container_, this.factorInOpacity_) &&
+                otherSlides.every(
+                    (otherSlide) => {
+                        return !getVisibleArea(
+                            otherSlide, this.container_, this.factorInOpacity_);
+                    });
     }
 
     getSlides() {

@@ -60,7 +60,11 @@ class RenderLoop {
     }
 
     runFnsForStep_(step) {
-        [...this.scheduledFns_.get(step).values()].forEach((fn) => fn());
+        const fns = this.scheduledFns_.get(step).values();
+        let nextFn;
+        while (nextFn = fns.next().value) {
+            nextFn();
+        }
         this.scheduledFns_.set(step, new Map());
     }
 

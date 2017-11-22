@@ -15,7 +15,6 @@ function handleError(err) {
 gulp.task('js', () => {
     return browserify({entries: './main.js', debug: true})
         .transform("babelify", {
-            // plugins: [['angularjs-annotate', {explicitOnly: true}]],
             presets: ["es2015"],
         })
         .on('error', handleError)
@@ -25,11 +24,6 @@ gulp.task('js', () => {
         .on('error', handleError)
         .pipe(buffer())
         .on('error', handleError)
-        // .pipe(sourcemaps.init())
-        // .on('error', handleError)
-        // .pipe(uglify())
-        // .on('error', handleError)
-        // .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest('./'));
 });
 

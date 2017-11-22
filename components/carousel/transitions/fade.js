@@ -11,19 +11,15 @@ class Fade extends Transition {
     transition(targetSlide, carousel) {
         const slidesToFade =
             carousel.getSlides().filter((slide) => slide !== targetSlide);
-        slidesToFade.map((slide) => {
-            renderLoop.measure(() => {
-                const opacity = getOpacity(slide);
-                renderLoop.mutate(
-                    () => slide.style.opacity = opacity - this.step_);
-            });
-        });
         renderLoop.measure(() => {
-           const opacity = getOpacity(targetSlide);
-           renderLoop.mutate(() => {
-               console.log(opacity);
-               targetSlide.style.opacity = Math.max(1, opacity + this.step_)
-           });
+            const opacity = getOpacity(targetSlide) + this.step_;
+            renderLoop.mutate(
+                () => targetSlide.style.opacity = Math.min(1, opacity));
+            slidesToFade.forEach((slide) => {
+                const opacity = getOpacity(slide) - this.step_;
+                renderLoop.mutate(
+                    () => slide.style.opacity = Math.max(0, opacity));
+            });
         });
     }
 }

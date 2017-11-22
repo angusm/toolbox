@@ -34,10 +34,14 @@ class CarouselNav {
 
     render_() {
         const activeSlide = this.carousel_.getActiveSlide();
+        const cachedSlides = this.renderCache_.get(CacheKey.SLIDES);
+        const currentSlides = this.carousel_.getSlides();
         renderLoop.mutate(() => {
-            if (this.getNavItemsToDisplay_() )
-            this.resetNavItems_();
+            if (!areListValuesEqual(cachedSlides, currentSlides)) {
+                this.resetNavItems_();
+            }
             this.markActiveNavItem(activeSlide);
+            this.renderCache_.set(CacheKey.SLIDES, currentSlides);
             renderLoop.measure(() => this.render_());
         });
     }
@@ -55,8 +59,14 @@ class CarouselNav {
     }
 
     markActiveNavItem(activeSlide) {
-        this.navItems_.get(activeSlide)
-            .classList.add(DefaultClass.ACTIVE_NAV_ITEM);
+        this.carousel_.getSlides().forEach((slide) => {
+            const navClassList = this.navItems_.get(slide).classList;
+            if (slide === activeSlide) {
+                navClassList.add(DefaultClass.ACTIVE_NAV_ITEM);
+            } else {
+                navClassList.remove(DefaultClass.ACTIVE_NAV_ITEM);
+            }
+        });
     }
 
     static createDefaultNavItem(slide, carousel) {
