@@ -73,7 +73,7 @@ class CarouselNav {
         const element = document.createElement('li');
         element.innerHTML = '.';
         element.addEventListener(
-            'click', () => carousel.transitionToSlide(slide));
+            'click', () => carousel.transitionToSlideImmediately(slide));
         return element;
     }
 }

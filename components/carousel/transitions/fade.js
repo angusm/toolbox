@@ -8,6 +8,13 @@ class Fade extends Transition {
         this.step_ = step;
     }
 
+    init(targetSlide, carousel) {
+        renderLoop.mutate(() => {
+            carousel.getSlides().forEach((slide) => slide.style.opacity = 0);
+            targetSlide.style.opacity = 1;
+        });
+    }
+
     transition(targetSlide, carousel) {
         const slidesToFade =
             carousel.getSlides().filter((slide) => slide !== targetSlide);

@@ -28,15 +28,25 @@ class Carousel {
         this.transitionTargets_ = [...this.transitionTargets_, targetSlide];
     }
 
+    transitionToSlideImmediately(targetSlide) {
+        this.transitionTargets_ = [targetSlide];
+    }
+
     init_() {
+        this.transition_.init(this.getSlides()[0], this);
         this.render_();
+    }
+
+    isTransitioning() {
+        return this.transitionTargets_.length > 0;
     }
 
     render_() {
         renderLoop.measure(() => {
             this.removeCurrentlyActiveTransitionTargets_();
             if (this.getNextTransitionTarget_()) {
-                this.transition_.transition(this.getNextTransitionTarget_(), this);
+                this.transition_.transition(
+                    this.getNextTransitionTarget_(), this);
             }
             renderLoop.mutate(() => this.render_());
         });
@@ -45,6 +55,19 @@ class Carousel {
     getActiveSlide() {
         return getMostVisibleElement(
             this.slides_, this.container_, this.factorInOpacity_);
+    }
+
+    getActiveSlideIndex() {
+        return this.getSlideIndex(this.getActiveSlide());
+    }
+
+    getSlideIndex(slide) {
+        return this.getSlides().indexOf(slide);
+    }
+
+    getSlidesBetween(a, b) {
+        return this.getSlides()
+          .slice(this.getSlideIndex(a) + 1, this.getSlideIndex(b));
     }
 
     isSlideFullyVisible_(slide) {
@@ -58,8 +81,20 @@ class Carousel {
                     });
     }
 
+    getContainer() {
+        return this.container_;
+    }
+
     getSlides() {
         return [...this.slides_];
+    }
+
+    getSlidesBefore(slide) {
+        return this.getSlides().slice(0, this.getSlides().indexOf(slide));
+    }
+
+    getSlidesAfter(slide) {
+        return this.getSlides().slice(this.getSlides().indexOf(slide) + 1);
     }
 
     getNextTransitionTarget_() {
@@ -73,6 +108,25 @@ class Carousel {
         ) {
             this.transitionTargets_ = this.transitionTargets_.slice(1);
         }
+    }
+
+    next() {
+        this.transitionSlidesBy(1);
+    }
+
+    previous() {
+        this.transitionSlidesBy(-1);
+    }
+
+    transitionSlidesBy(value) {
+        const nextIndex =
+            this.getSlides().indexOf(this.getActiveSlide()) + value;
+        this.transitionToIndex_(nextIndex);
+    }
+
+    transitionToIndex_(index) {
+        const clampedIndex = index % this.getSlides().length;
+        this.transitionToSlide(this.getSlides()[clampedIndex]);
     }
 
 
