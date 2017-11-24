@@ -5,7 +5,7 @@ const Fade = require('../transitions/fade');
 const Slide = require('../transitions/slide');
 
 const selectorsAndTransitions = [
-  // ['.fade-demo', new Fade()],
+  ['.fade-demo', new Fade()],
   ['.slide-demo', new Slide()],
 ];
 
