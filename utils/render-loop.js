@@ -1,12 +1,16 @@
 const DynamicDefaultMap = require('./map/dynamic-default');
 
 const Step = Object.freeze({
+  CLEANUP: Symbol('Cleanup'),
   MEASURE: Symbol('Measure'),
   MUTATE: Symbol('Mutate'),
-  CLEANUP: Symbol('Cleanup'),
 });
 
-const STEP_ORDER = Object.freeze([Step.MEASURE, Step.MUTATE]);
+const STEP_ORDER = Object.freeze([
+  Step.MEASURE,
+  Step.MUTATE,
+  Step.CLEANUP,
+]);
 
 const FPS = 60;
 

@@ -55,13 +55,12 @@ class CursorData {
   }
 
   getPosition() {
-    return this.currentPosition_;
+    return this.currentPosition_.getPosition();
   }
 
   getFrameDelta() {
     return this.lastPositions_.length ?
-      this.currentPosition_.getPosition()
-        .subtract(this.lastPositions_[0].getPosition()) :
+      this.getPosition().subtract(this.lastPositions_[0].getPosition()) :
       ZERO_VECTOR;
   }
 
