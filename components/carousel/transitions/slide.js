@@ -1,10 +1,18 @@
+const EventType = require('../../../utils/dom/event/event-type');
 const Transition = require('./base');
 const Vector2d = require('../../../utils/math/geometry/vector-2d');
+const addEventListener = require('../../../utils/dom/event/add-event-listener');
+const cursor = require('../../../utils/input/cursor');
 const getSign = require('../../../utils/math/get-sign');
 const getVisibleDistanceBetweenElements = require('../../../utils/dom/position/get-visible-distance-between-elements');
+const max = require('../../../utils/iterable/max');
+const min = require('../../../utils/iterable/min');
 const renderLoop = require('../../../utils/render-loop');
 const sum = require('../../../utils/math/sum');
 const translate2d = require('../../../utils/dom/position/translate-2d');
+
+const SLIDE_INTERACTION = Symbol('Slide Interaction');
+const GESTURE_MOVEMENT_THRESHOLD = 20;
 
 class Slide extends Transition {
   constructor(step = 50) {
@@ -13,6 +21,53 @@ class Slide extends Transition {
   }
 
   init(target, carousel) {
+    Slide.initPosition_(target, carousel);
+    Slide.initInteraction_(carousel);
+    renderLoop.mutate(() => Slide.render_(carousel));
+  }
+
+  static render_(carousel) {
+    renderLoop.measure(() => {
+      if (carousel.isBeingInteractedWith(SLIDE_INTERACTION)) {
+        carousel.getSlides().forEach((slide) => {
+          const translation =
+            new Vector2d(cursor.getClient().getFrameDelta().x, 0);
+          translate2d(slide, translation);
+        });
+      }
+      renderLoop.mutate(() => Slide.render_(carousel));
+    });
+  }
+
+  static initInteraction_(carousel) {
+    addEventListener(
+      carousel.getContainer(),
+      EventType.CURSOR_DOWN,
+      () => carousel.startInteraction(SLIDE_INTERACTION));
+    addEventListener(
+      window,
+      EventType.CURSOR_UP,
+      () => Slide.finishSlideInteraction(carousel));
+  }
+
+  static finishSlideInteraction(carousel) {
+    carousel.endInteraction(SLIDE_INTERACTION);
+    const gestureDistance = cursor.getClient().getPressedGestureDelta().x;
+    console.log(gestureDistance);
+    if (Math.abs(gestureDistance) < GESTURE_MOVEMENT_THRESHOLD) {
+      carousel.transitionToSlide(carousel.getActiveSlide());
+    } else {
+      const filterFn = gestureDistance > 0 ? min : max;
+      const slideDistance =
+        (slide) => getVisibleDistanceBetweenElements(
+          slide, carousel.getContainer());
+      carousel.transitionToSlide(
+        filterFn(carousel.getVisibleSlides(), slideDistance));
+      console.log('SLID TO DESIRED');
+    }
+  }
+
+  static initPosition_(target, carousel) {
     renderLoop.measure(() => {
       const translation =
         Slide.getTransitionTranslation_(target, carousel, Number.MAX_VALUE);

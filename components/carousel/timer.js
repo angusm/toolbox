@@ -19,7 +19,7 @@ class CarouselTimer {
       if (+new Date() > +this.lastActionTime_ + this.interval_) {
         this.carousel_.next();
       }
-      if (this.carousel_.isTransitioning()) {
+      if (!this.carousel_.isIdle()) {
         this.lastActionTime_ = new Date();
       }
       renderLoop.mutate(() => this.startTimeout_());

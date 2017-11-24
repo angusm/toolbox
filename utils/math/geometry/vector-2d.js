@@ -2,7 +2,7 @@ const Matrix = require('../../dom/position/matrix');
 const Vector = require('./vector');
 
 class Vector2d extends Vector {
-    constructor(x, y) {
+    constructor(x = 0, y = 0) {
         super(x, y);
     }
 
@@ -24,6 +24,10 @@ class Vector2d extends Vector {
 
     static fromElementTransform(element) {
         return Vector2d.fromMatrix(Matrix.fromElementTransform(element));
+    }
+
+    toString() {
+        return `X: ${this.x}, Y: ${this.y}`;
     }
 }
 

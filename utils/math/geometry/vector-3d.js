@@ -1,7 +1,7 @@
 const Vector2d = require('./vector-2d');
 
 class Vector3d extends Vector2d {
-    constructor(x, y,z) {
+    constructor(x = 0, y = 0, z = 0) {
         super(x, y, z);
     }
 
