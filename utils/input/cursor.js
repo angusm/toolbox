@@ -93,7 +93,6 @@ class CursorData {
   static getGestureDeltaFromPositions_(...positions) {
     const deltas = Vector2d.getDeltas(
       ...positions.map((position) => position.getPosition()));
-    console.log(deltas.map((d) => d.x));
     const scaledDeltas = deltas.map(
       (delta, index) => delta.scale((deltas.length - index) / deltas.length));
     return Vector2d.add(...scaledDeltas);

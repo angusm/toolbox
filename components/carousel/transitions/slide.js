@@ -29,11 +29,9 @@ class Slide extends Transition {
   static render_(carousel) {
     renderLoop.measure(() => {
       if (carousel.isBeingInteractedWith(SLIDE_INTERACTION)) {
-        carousel.getSlides().forEach((slide) => {
-          const translation =
-            new Vector2d(cursor.getClient().getFrameDelta().x, 0);
-          translate2d(slide, translation);
-        });
+        const translation =
+          new Vector2d(cursor.getClient().getFrameDelta().x, 0);
+        Slide.transition_(carousel.getActiveSlide(), carousel, translation);
       }
       renderLoop.mutate(() => Slide.render_(carousel));
     });
@@ -53,17 +51,15 @@ class Slide extends Transition {
   static finishSlideInteraction(carousel) {
     carousel.endInteraction(SLIDE_INTERACTION);
     const gestureDistance = cursor.getClient().getPressedGestureDelta().x;
-    console.log(gestureDistance);
     if (Math.abs(gestureDistance) < GESTURE_MOVEMENT_THRESHOLD) {
       carousel.transitionToSlide(carousel.getActiveSlide());
     } else {
       const filterFn = gestureDistance > 0 ? min : max;
       const slideDistance =
-        (slide) => getVisibleDistanceBetweenElements(
-          slide, carousel.getContainer());
+        (slide) =>
+          getVisibleDistanceBetweenElements(slide, carousel.getContainer()).x;
       carousel.transitionToSlide(
         filterFn(carousel.getVisibleSlides(), slideDistance));
-      console.log('SLID TO DESIRED');
     }
   }
 
