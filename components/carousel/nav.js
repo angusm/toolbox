@@ -71,7 +71,6 @@ class CarouselNav {
 
     static createDefaultNavItem(slide, carousel) {
         const element = document.createElement('li');
-        element.innerHTML = '.';
         element.addEventListener(
             'click', () => carousel.transitionToSlideImmediately(slide));
         return element;

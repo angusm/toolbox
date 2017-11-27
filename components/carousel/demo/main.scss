@@ -37,6 +37,10 @@
     height: 50px;
     width: 50px;
 
+    &::before {
+      content: '●';
+    }
+
     &.active {
       color: red;
     }
