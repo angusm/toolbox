@@ -6,8 +6,8 @@ const renderLoop = require('../render-loop');
 let singleton;
 
 const ZERO_VECTOR = new Vector2d();
-const POSITION_LIMIT = 600;
 const GESTURE_LIMIT = 30;
+const POSITION_LIMIT = GESTURE_LIMIT;
 
 class CursorPosition {
   constructor(position, pressed) {
@@ -41,9 +41,8 @@ class CursorData {
     renderLoop.measure(() => {
       renderLoop.cleanup(() => {
         this.lastPositions_ =
-          [
-            this.currentPosition_,
-            ...this.lastPositions_.slice(0, POSITION_LIMIT - 1)];
+          [this.currentPosition_].concat(
+            this.lastPositions_.slice(0, POSITION_LIMIT - 1));
         this.render_();
       });
     });
@@ -86,7 +85,8 @@ class CursorData {
       endIndex++;
     }
 
-    return [this.currentPosition_, ...this.lastPositions_.slice(0, endIndex)];
+    return [this.currentPosition_].concat(
+      this.lastPositions_.slice(0, endIndex));
   }
 
   static getGestureDeltaFromPositions_(...positions) {
