@@ -1,11 +1,7 @@
-const Range = require('../../range');
-const getVisibleDistanceBetweenElements = require('./get-visible-distance-between-elements');
+const getVisibleArea = require('./get-visible-area');
 
-function isVisible(target, container) {
-    const xRange = new Range(-target.offsetWidth, container.offsetWidth);
-    const yRange = new Range(-target.offsetHeight, container.offsetHeight);
-    const distance = getVisibleDistanceBetweenElements(target, container);
-    return xRange.contains(distance.x) && yRange.contains(distance.y);
+function isVisible(target, container, factorInOpacity = false) {
+    return getVisibleArea(target, container, factorInOpacity) > 0;
 }
 
 module.exports = isVisible;
