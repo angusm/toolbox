@@ -68,7 +68,7 @@ class Vector {
   }
 
   equals(...vectors) {
-    this.constructor.areEqual(this, ...vectors);
+    return this.constructor.areEqual(this, ...vectors);
   }
 
   getLength() {
