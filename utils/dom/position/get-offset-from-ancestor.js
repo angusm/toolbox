@@ -1,4 +1,5 @@
 const Vector2d = require('../../math/geometry/vector-2d');
+const frameMemoize = require('../../frame-memoize');
 const getOffsetAncestors = require('./get-offset-ancestors');
 
 function getOffsetFromAncestor(element, ancestor) {
@@ -10,4 +11,4 @@ function getOffsetFromAncestor(element, ancestor) {
     );
 }
 
-module.exports = getOffsetFromAncestor;
+module.exports = frameMemoize(getOffsetFromAncestor);

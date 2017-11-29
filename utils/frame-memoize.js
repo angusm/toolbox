@@ -4,12 +4,13 @@ const renderLoop = require('./render-loop');
 function frameMemoize(fn) {
   const cache = new MultiValueMap();
 
-  function clearCache() {
+  const clearCache = () => {
     renderLoop.cleanup(() => {
       cache.clear();
       renderLoop.measure(() => clearCache());
     });
-  }
+  };
+
   clearCache();
 
   return (...args) => {

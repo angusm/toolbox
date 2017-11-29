@@ -4,13 +4,8 @@ function getOffsetAncestors(element, terminusAncestor = null) {
     if (!element || element === terminusAncestor) {
         return [];
     }
-
-    const result =
-      [element].concat(
+    return [element].concat(
         getOffsetAncestors(element.offsetParent, terminusAncestor));
-    cache.set(element, terminusAncestor, result);
-
-    return result;
 }
 
 module.exports = frameMemoize(getOffsetAncestors);
