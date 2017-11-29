@@ -64,7 +64,7 @@ class Vector {
   }
 
   static areEqual(...vectors) {
-    return areListValuesEqual(vectors.map((v) => v.getValues()));
+    return areListValuesEqual(...vectors.map((v) => v.getValues()));
   }
 
   equals(...vectors) {
