@@ -51,6 +51,10 @@ class Scroll {
     });
   }
 
+  getDelta() {
+    return Vector2d.subtract(...this.positions_.slice(-2));
+  }
+
   static getForElement(element) {
     return instanceByElement.get(element);
   }
