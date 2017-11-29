@@ -6,10 +6,6 @@ class MapWrapper {
         [...iterable].forEach(([key, value]) => this.map_.set(key, value));
     }
 
-    get(key) {
-        return this.map_.get(key);
-    }
-
     get length() {
         return this.map_.length;
     }
@@ -18,7 +14,7 @@ class MapWrapper {
         return this.map_.size;
     }
 
-    claer() {
+    clear() {
         return this.map_.clear();
     }
 
