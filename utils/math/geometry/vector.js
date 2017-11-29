@@ -70,6 +70,11 @@ class Vector {
   equals(...vectors) {
     this.constructor.areEqual(this, ...vectors);
   }
+
+  getLength() {
+    return Math.sqrt(
+      sum(...this.getValues().map((value) => Math.pow(value, 2))));
+  }
 }
 
 module.exports = Vector;
