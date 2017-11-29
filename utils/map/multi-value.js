@@ -2,8 +2,8 @@ const MapWrapper = require('./map-wrapper');
 const DynamicDefaultMap = require('./dynamic-default');
 
 class MultiValueMap extends MapWrapper {
-    constructor(iterable = []) {
-        super(iterable);
+    constructor(iterable = [], InnerMapClass = Map) {
+        super(iterable, InnerMapClass);
         let uid = 0;
         this.uidsToValue_ = new Map();
         this.uids_ = DynamicDefaultMap.usingFunction((value) => {

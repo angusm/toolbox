@@ -1,4 +1,4 @@
-const MultiValueMap = require('./map/multi-value-map');
+const MultiValueMap = require('./map/multi-value');
 const renderLoop = require('./render-loop');
 
 function frameMemoize(fn) {

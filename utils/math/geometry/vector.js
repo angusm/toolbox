@@ -1,3 +1,4 @@
+const areListValuesEqual = require('../../iterable/are-list-values-equal');
 const sum = require('../sum');
 const zip = require('../../iterable/zip');
 
@@ -60,6 +61,14 @@ class Vector {
 
   scale(amount) {
     return this.constructor.scale(this, amount);
+  }
+
+  static areEqual(...vectors) {
+    return areListValuesEqual(vectors.map((v) => v.getValues()));
+  }
+
+  equals(...vectors) {
+    this.constructor.areEqual(this, ...vectors);
   }
 }
 
