@@ -1,6 +1,6 @@
 {
   "name": "toolbox",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Useful things in VanillaJS",
   "main": "index.js",
   "scripts": {
