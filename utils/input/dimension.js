@@ -1,7 +1,7 @@
 const CachedElementVector2d = require('./cached-element-vector-2d');
 
 class Dimension extends CachedElementVector2d {
-  getDimension() {
+  getDimensions() {
     return this.getCurrentVector_();
   }
 

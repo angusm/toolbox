@@ -20,10 +20,9 @@ class CachedElementVector2d {
   }
 
   static getInstancesByElement_() {
-    return this[Symbol.species].cache_ || (
-      this[Symbol.species].cache_ =
-        new DynamicDefaultMap.usingFunction(
-          (element) => new this[Symbol.species](element)));
+    return this.cache_ || (
+      this.cache_ =
+        new DynamicDefaultMap.usingFunction((element) => new this(element)));
   }
 
   init_() {
@@ -73,11 +72,11 @@ class CachedElementVector2d {
   }
 
   static getForElement(element) {
-    return this[Symbol.species].getInstancesByElement_().get(element);
+    return this.getInstancesByElement_().get(element);
   }
 
   static getSingleton() {
-    return this[Symbol.species].getInstancesByElement_().get(null);
+    return this.getInstancesByElement_().get(null);
   }
 }
 
