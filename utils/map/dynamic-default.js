@@ -1,5 +1,7 @@
 const MapWrapper = require('./map-wrapper');
 
+const doNothing = () => {};
+
 class DynamicDefaultMap extends MapWrapper {
     constructor(iterable = [], defaultFunction = doNothing) {
         super(iterable);

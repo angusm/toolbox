@@ -5,7 +5,7 @@ const renderLoop = require('../render-loop');
 let singleton;
 
 const instanceByElement =
-  new DynamicDefaultMap((element) => new Scroll(element));
+  new DynamicDefaultMap.usingFunction((element) => new Scroll(element));
 
 const ZERO_VECTOR = new Vector2d();
 
