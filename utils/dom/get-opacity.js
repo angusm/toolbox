@@ -1,6 +1,7 @@
+const getStyleAsFloat = require('./get-style-as-float');
+
 function getOpacity(element) {
-    const parsedOpacity = parseFloat(element.style.opacity);
-    return isNaN(parsedOpacity) ? 1 : parsedOpacity;
+    return getStyleAsFloat(element, 'opacity');
 }
 
 module.exports = getOpacity;
