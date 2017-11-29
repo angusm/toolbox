@@ -60,4 +60,4 @@ class Scroll {
   }
 }
 
-module.exports = Scroll.getSingleton();
+module.exports = Scroll;
