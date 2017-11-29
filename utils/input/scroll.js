@@ -8,6 +8,7 @@ const instanceByElement =
   new DynamicDefaultMap.usingFunction((element) => new Scroll(element));
 
 const ZERO_VECTOR = new Vector2d();
+const POSITION_LIMIT = 2;
 
 class Scroll {
   constructor(element = null) {
@@ -45,8 +46,9 @@ class Scroll {
 
   render_() {
     renderLoop.measure(() => {
-      this.positions_.push(
-        new Vector2d(this.getScrollX_(), this.getScrollY_()));
+      this.positions_ =
+        this.positions_.slice(-(POSITION_LIMIT - 1))
+          .concat([new Vector2d(this.getScrollX_(), this.getScrollY_())]);
       renderLoop.cleanup(() => this.render_());
     });
   }
