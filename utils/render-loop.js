@@ -4,9 +4,11 @@ const Step = Object.freeze({
   CLEANUP: Symbol('Cleanup'),
   MEASURE: Symbol('Measure'),
   MUTATE: Symbol('Mutate'),
+  PRE_MEASURE: Symbol('Pre-measure'),
 });
 
 const STEP_ORDER = Object.freeze([
+  Step.PRE_MEASURE,
   Step.MEASURE,
   Step.MUTATE,
   Step.CLEANUP,
@@ -30,6 +32,10 @@ class RenderLoop {
     this.scheduledFns_ = DynamicDefaultMap.usingFunction(() => new Map());
     this.lastRunTime_ = new Date(0);
     this.runLoop_();
+  }
+
+  premeasure(fn) {
+    return this.addFnToStep_(fn, Step.PRE_MEASURE)
   }
 
   measure(fn) {

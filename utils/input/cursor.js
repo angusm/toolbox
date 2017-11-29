@@ -34,11 +34,11 @@ class CursorData {
   }
 
   init_() {
-    renderLoop.measure(() => this.render_());
+    renderLoop.premeasure(() => this.render_());
   }
 
   render_() {
-    renderLoop.measure(() => {
+    renderLoop.premeasure(() => {
       renderLoop.cleanup(() => {
         this.lastPositions_ =
           [this.currentPosition_].concat(

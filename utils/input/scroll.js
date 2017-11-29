@@ -45,7 +45,7 @@ class Scroll {
   }
 
   render_() {
-    renderLoop.measure(() => {
+    renderLoop.premeasure(() => {
       this.positions_ =
         this.positions_.slice(-(POSITION_LIMIT - 1))
           .concat([new Vector2d(this.getScrollX_(), this.getScrollY_())]);
