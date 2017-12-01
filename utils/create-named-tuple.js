@@ -1,0 +1,5 @@
+class NamedTuple {
+  constructor(...names) {
+    
+  }
+}
