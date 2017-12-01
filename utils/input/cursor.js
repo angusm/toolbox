@@ -1,6 +1,7 @@
 const EventType = require('../dom/event/event-type');
 const Vector2d = require('../math/geometry/vector-2d');
 const addEventListner = require('../dom/event/add-event-listener');
+const frame = require('../frame');
 const renderLoop = require('../render-loop');
 
 let singleton;
@@ -10,13 +11,22 @@ const GESTURE_LIMIT = 30;
 const POSITION_LIMIT = GESTURE_LIMIT;
 
 class CursorPosition {
-  constructor(position, pressed) {
+  constructor(position, pressed, frame) {
     this.position_ = position;
     this.pressed_ = pressed;
+    this.frame_ = frame;
   }
 
   static fromXY(x, y, pressed) {
     return new this(new Vector2d(x, y), pressed);
+  }
+
+  getFrame() {
+    return this.frame_;
+  }
+
+  isForFrame(frame) {
+    return this.getFrame() === frame;
   }
 
   isPressed() {
@@ -62,9 +72,28 @@ class CursorData {
   }
 
   getFrameDelta() {
-    return this.lastPositions_.length ?
-      this.getPosition().subtract(this.lastPositions_[0].getPosition()) :
-      ZERO_VECTOR;
+    if (this.lastPositions_.length === 0) {
+      return ZERO_VECTOR;
+    }
+
+    return Vector2d.sumDeltas(
+      ...this.getPositionsForLastFrame_()
+        .map((position) => position.getPosition()));
+
+    // return this.lastPositions_.length ?
+    //   this.getPosition().subtract(this.lastPositions_[0].getPosition()) :
+    //   ZERO_VECTOR;
+  }
+
+  getPositionsForLastFrame_() {
+    const currentFrame = this.currentPosition_.getFrame();
+    let endIndex = 0;
+    while (this.lastPositions_[endIndex].isForFrame(currentFrame)) {
+      endIndex++;
+    }
+
+    return [this.currentPosition_].concat(
+      this.lastPositions_.slice(0, endIndex));
   }
 
   getGestureDelta() {
@@ -107,6 +136,7 @@ class Cursor {
     this.pagePosition_ = new CursorData();
     this.screenPosition_ = new CursorData();
     this.isPressed_ = false;
+    this.frame_ = 0;
     this.init_();
   }
 
@@ -117,6 +147,7 @@ class Cursor {
       window, EventType.CURSOR_UP, (event) => this.updatePress_(event, false));
     addEventListner(
       window, EventType.CURSOR_MOVE, (event) => this.updatePosition_(event));
+    this.render_();
   }
 
   static getSingleton() {
@@ -156,10 +187,6 @@ class Cursor {
     if (touchEvent.touches.length > 0) {
       this.updatePositionFromEvent_(touchEvent.touches[0]);
     }
-  }
-
-  static getPositionPropertyMappings_() {
-    return POSITION_PROPERTY_MAPPINGS;
   }
 
   updatePositionFromEvent_(event) {
