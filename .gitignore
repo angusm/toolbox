@@ -1,2 +1,4 @@
 *.css
 *.min.js
+dist/
+*.js.map

@@ -88,7 +88,7 @@ class RenderLoop {
   }
 
   static getSingleton() {
-    return singleton = singleton || new RenderLoop();
+    return singleton = singleton || new this();
   }
 }
 

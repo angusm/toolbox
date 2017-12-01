@@ -24,14 +24,14 @@ gulp.task('js', () => {
         .on('error', handleError)
         .pipe(buffer())
         .on('error', handleError)
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('css', () => {
     return gulp.src('./main.scss')
         .pipe(sass()) // Converts Sass to CSS with gulp-sass
         .on('error', handleError)
-        .pipe(gulp.dest('./'))
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('watch', ['css', 'js'], () => {

@@ -15,6 +15,10 @@ class CursorPosition {
     this.pressed_ = pressed;
   }
 
+  static fromXY(x, y, pressed) {
+    return new this(new Vector2d(x, y), pressed);
+  }
+
   isPressed() {
     return this.pressed_;
   }
@@ -79,9 +83,8 @@ class CursorData {
       return [];
     }
     let endIndex = 0;
-    while (
-      endIndex < GESTURE_LIMIT - 1 && this.lastPositions_[endIndex].isPressed()
-    ) {
+    while (endIndex < GESTURE_LIMIT - 1 &&
+    this.lastPositions_[endIndex].isPressed()) {
       endIndex++;
     }
 
@@ -102,21 +105,22 @@ class Cursor {
   constructor() {
     this.clientPosition_ = new CursorData();
     this.pagePosition_ = new CursorData();
+    this.screenPosition_ = new CursorData();
     this.isPressed_ = false;
     this.init_();
   }
 
   init_() {
     addEventListner(
-      window, EventType.CURSOR_DOWN, () => this.isPressed_ = true);
+      window, EventType.CURSOR_DOWN, (event) => this.updatePress_(event, true));
     addEventListner(
-      window, EventType.CURSOR_UP, () => this.isPressed_ = false);
+      window, EventType.CURSOR_UP, (event) => this.updatePress_(event, false));
     addEventListner(
       window, EventType.CURSOR_MOVE, (event) => this.updatePosition_(event));
   }
 
   static getSingleton() {
-    return singleton = singleton || new Cursor();
+    return singleton = singleton || new this();
   }
 
   isPressed() {
@@ -131,6 +135,15 @@ class Cursor {
     return this.pagePosition_;
   }
 
+  getScreen() {
+    return this.screenPosition_;
+  }
+
+  updatePress_(event, isPressed) {
+    this.isPressed_ = isPressed;
+    this.updatePosition_(event);
+  }
+
   updatePosition_(event) {
     if (event instanceof MouseEvent) {
       this.updatePositionFromEvent_(event);
@@ -140,20 +153,35 @@ class Cursor {
   }
 
   updatePositionFromTouchEvent_(touchEvent) {
-    this.updatePosition_(touchEvent.touches[0]);
+    if (touchEvent.touches.length > 0) {
+      this.updatePositionFromEvent_(touchEvent.touches[0]);
+    }
+  }
+
+  static getPositionPropertyMappings_() {
+    return POSITION_PROPERTY_MAPPINGS;
   }
 
   updatePositionFromEvent_(event) {
-    this.clientPosition_ =
-      this.clientPosition_.update(
-        new CursorPosition(
-          new Vector2d(event.clientX, event.clientY), this.isPressed_));
-
     this.pagePosition_ =
-      this.pagePosition_.update(
-        new CursorPosition(
-          new Vector2d(event.pageX, event.pageY), this.isPressed_));
+      this.updatePositionWithXY_(this.pagePosition_, event.pageX, event.pageY);
+
+    this.clientPosition_ =
+      this.updatePositionWithXY_(
+        this.clientPosition_, event.clientX, event.clientY);
+
+    this.screenPosition_ =
+      this.updatePositionWithXY_(
+        this.screenPosition_, event.screenX, event.screenY);
   }
+
+  updatePositionWithXY_(position, xValue, yValue) {
+    return position.update(
+      CursorPosition.fromXY(xValue, yValue, this.isPressed()));
+  }
+
 }
+
+window.cc = Cursor.getSingleton();
 
 module.exports = Cursor.getSingleton();
