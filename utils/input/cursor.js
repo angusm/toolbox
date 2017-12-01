@@ -1,6 +1,8 @@
 const EventType = require('../dom/event/event-type');
 const Vector2d = require('../math/geometry/vector-2d');
 const addEventListner = require('../dom/event/add-event-listener');
+const filterUntilFalse = require('../iterable/filter-until-false');
+const filterUntilFirst = require('../iterable/filter-until-first');
 const frame = require('../frame');
 const renderLoop = require('../render-loop');
 
@@ -11,10 +13,10 @@ const GESTURE_LIMIT = 30;
 const POSITION_LIMIT = GESTURE_LIMIT;
 
 class CursorPosition {
-  constructor(position, pressed, frame) {
+  constructor(position, pressed) {
     this.position_ = position;
     this.pressed_ = pressed;
-    this.frame_ = frame;
+    this.frame_ = frame.getFrame();
   }
 
   static fromXY(x, y, pressed) {
@@ -25,8 +27,8 @@ class CursorPosition {
     return this.frame_;
   }
 
-  isForFrame(frame) {
-    return this.getFrame() === frame;
+  isForFrame(...frames) {
+    return frames.indexOf(this.getFrame()) !== -1;
   }
 
   isPressed() {
@@ -41,65 +43,62 @@ class CursorPosition {
 const ZERO_POSITION = new CursorPosition(ZERO_VECTOR, false);
 class CursorData {
   constructor(currentPosition = ZERO_POSITION, ...pastPositions) {
-    this.currentPosition_ = currentPosition;
-    this.lastPositions_ = pastPositions;
-
-    this.init_();
-  }
-
-  init_() {
-    renderLoop.premeasure(() => this.render_());
-  }
-
-  render_() {
-    renderLoop.premeasure(() => {
-      renderLoop.cleanup(() => {
-        this.lastPositions_ =
-          [this.currentPosition_].concat(
-            this.lastPositions_.slice(0, POSITION_LIMIT - 1));
-        this.render_();
-      });
-    });
+    this.positions_ = [currentPosition, ...pastPositions];
   }
 
   update(position) {
     return new CursorData(
-      position, this.currentPosition_, ...this.lastPositions_);
+      position, ...this.positions_.slice(0, POSITION_LIMIT - 1));
+  }
+
+  getLatestPosition_() {
+    return this.positions_[0];
   }
 
   getPosition() {
-    return this.currentPosition_.getPosition();
+    return this.getLatestPosition_().getPosition();
   }
 
   getFrameDelta() {
-    if (this.lastPositions_.length === 0) {
-      return ZERO_VECTOR;
-    }
-
-    return Vector2d.sumDeltas(
-      ...this.getPositionsForLastFrame_()
-        .map((position) => position.getPosition()));
-
-    // return this.lastPositions_.length ?
-    //   this.getPosition().subtract(this.lastPositions_[0].getPosition()) :
-    //   ZERO_VECTOR;
+    return this.getFrameDelta_(false);
   }
 
-  getPositionsForLastFrame_() {
-    const currentFrame = this.currentPosition_.getFrame();
-    let endIndex = 0;
-    while (this.lastPositions_[endIndex].isForFrame(currentFrame)) {
-      endIndex++;
+  getPressedFrameDelta() {
+    return this.getFrameDelta_(true);
+  }
+
+  getFrameDelta_(usePressedPositionsOnly) {
+    const positions = this.getPositionsForFrameDelta_(usePressedPositionsOnly);
+    return positions.length === 0 ?
+      ZERO_VECTOR :
+      Vector2d.sumDeltas(
+        ...positions.map((position) => position.getPosition()));
+  }
+
+  getPositionsForFrameDelta_(usePressedPositionsOnly) {
+    const currentFrame = frame.getFrame();
+
+    // If the latest frame is not the current one then we have no delta to
+    // report.
+    if (!this.getLatestPosition_().isForFrame(currentFrame)) {
+      return [];
     }
 
-    return [this.currentPosition_].concat(
-      this.lastPositions_.slice(0, endIndex));
+    const isPreviousFrame = (position) => !position.isForFrame(currentFrame);
+    const positionsToConsider =
+      filterUntilFirst(this.positions_, isPreviousFrame);
+
+    if (usePressedPositionsOnly) {
+      const isPressed = (position) => position.isPressed();
+      return filterUntilFalse(positionsToConsider, isPressed);
+    } else {
+      return positionsToConsider;
+    }
+
   }
 
   getGestureDelta() {
-    return CursorData.getGestureDeltaFromPositions_(
-      this.currentPosition_,
-      ...this.lastPositions_.slice(0, GESTURE_LIMIT - 1));
+    return CursorData.getGestureDeltaFromPositions_(...this.positions_);
   }
 
   getPressedGestureDelta() {
@@ -108,17 +107,10 @@ class CursorData {
   }
 
   getPressedGesturePositions_() {
-    if (!this.currentPosition_.isPressed()) {
-      return [];
-    }
-    let endIndex = 0;
-    while (endIndex < GESTURE_LIMIT - 1 &&
-    this.lastPositions_[endIndex].isPressed()) {
-      endIndex++;
-    }
+    const conditionFn =
+      (position, index) => index < GESTURE_LIMIT - 1 && position.isPressed();
 
-    return [this.currentPosition_].concat(
-      this.lastPositions_.slice(0, endIndex));
+    return filterUntilFalse(this.positions_, conditionFn);
   }
 
   static getGestureDeltaFromPositions_(...positions) {
@@ -147,7 +139,6 @@ class Cursor {
       window, EventType.CURSOR_UP, (event) => this.updatePress_(event, false));
     addEventListner(
       window, EventType.CURSOR_MOVE, (event) => this.updatePosition_(event));
-    this.render_();
   }
 
   static getSingleton() {
@@ -186,29 +177,44 @@ class Cursor {
   updatePositionFromTouchEvent_(touchEvent) {
     if (touchEvent.touches.length > 0) {
       this.updatePositionFromEvent_(touchEvent.touches[0]);
+    } else {
+      this.endTouch_();
     }
   }
 
+  endTouch_() {
+    renderLoop.premeasure(() => {
+      this.pagePosition_ = this.duplicatePosition_(this.pagePosition_);
+      this.clientPosition_ = this.duplicatePosition_(this.clientPosition_);
+      this.screenPosition_ = this.duplicatePosition_(this.screenPosition_);
+    });
+  }
+
   updatePositionFromEvent_(event) {
-    this.pagePosition_ =
-      this.updatePositionWithXY_(this.pagePosition_, event.pageX, event.pageY);
+    renderLoop.premeasure(() => {
+      this.pagePosition_ =
+        this.updatePositionWithXY_(
+          this.pagePosition_, event.pageX, event.pageY);
 
-    this.clientPosition_ =
-      this.updatePositionWithXY_(
-        this.clientPosition_, event.clientX, event.clientY);
+      this.clientPosition_ =
+        this.updatePositionWithXY_(
+          this.clientPosition_, event.clientX, event.clientY);
 
-    this.screenPosition_ =
-      this.updatePositionWithXY_(
-        this.screenPosition_, event.screenX, event.screenY);
+      this.screenPosition_ =
+        this.updatePositionWithXY_(
+          this.screenPosition_, event.screenX, event.screenY);
+    });
+  }
+
+  duplicatePosition_(position) {
+    return position.update(
+      new CursorPosition(position.getPosition(), this.isPressed()));
   }
 
   updatePositionWithXY_(position, xValue, yValue) {
     return position.update(
       CursorPosition.fromXY(xValue, yValue, this.isPressed()));
   }
-
 }
-
-window.cc = Cursor.getSingleton();
 
 module.exports = Cursor.getSingleton();

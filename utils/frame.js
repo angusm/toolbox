@@ -7,7 +7,7 @@ class Frame {
   }
 
   render_() {
-    renderLoop.premeasure(() => {
+    renderLoop.framecount(() => {
       this.currentFrame_++;
       renderLoop.cleanup(() => this.render_());
     });

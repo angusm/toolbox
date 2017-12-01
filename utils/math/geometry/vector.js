@@ -44,8 +44,7 @@ class Vector {
   }
 
   static sumDeltas(...vectors) {
-    return this[Symbol.species].add(
-      ...this[Symbol.species].getDeltas(...vectors));
+    return this[Symbol.species].subtract(vectors[0], vectors.slice(-1)[0]);
   }
 
   static getDeltas(...vectors) {

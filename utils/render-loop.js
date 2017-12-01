@@ -2,12 +2,14 @@ const DynamicDefaultMap = require('./map/dynamic-default');
 
 const Step = Object.freeze({
   CLEANUP: Symbol('Cleanup'),
+  FRAME_COUNT: Symbol('Frame Count'),
   MEASURE: Symbol('Measure'),
   MUTATE: Symbol('Mutate'),
   PRE_MEASURE: Symbol('Pre-measure'),
 });
 
 const STEP_ORDER = Object.freeze([
+  Step.FRAME_COUNT,
   Step.PRE_MEASURE,
   Step.MEASURE,
   Step.MUTATE,
@@ -32,6 +34,10 @@ class RenderLoop {
     this.scheduledFns_ = DynamicDefaultMap.usingFunction(() => new Map());
     this.lastRunTime_ = new Date(0);
     this.runLoop_();
+  }
+
+  framecount(fn) {
+    return this.addFnToStep_(fn, Step.FRAME_COUNT);
   }
 
   premeasure(fn) {
