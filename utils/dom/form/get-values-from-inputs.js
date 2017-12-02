@@ -1,4 +1,5 @@
 const getAsList = require('../../iterable/get-as-list');
+const getAttributeValue = require('../get-attribute-value');
 const getInputValue = require('./get-input-value');
 
 function getValuesFromInputs(inputs) {
