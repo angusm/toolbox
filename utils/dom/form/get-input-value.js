@@ -19,7 +19,7 @@ function getRadioInputValue_(input) {
 
 function getMatchingRadioInputs_(input) {
   const name = getAttributeValue(input, 'name');
-  return document.body.querySelector(`input[type="radio"][name="${name}"]`);
+  return document.body.querySelectorAll(`input[type="radio"][name="${name}"]`);
 }
 
 function getInputValue(input) {
