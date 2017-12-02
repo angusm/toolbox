@@ -1,7 +1,7 @@
-const defaultSymbol = require('../default-symbol');
-const getAsList = require('../iterable/get-as-list');
-const getAttributeValue = require('./get-attribute-value');
-const runMapAsSwitch = require('../run-map-as-switch');
+const defaultSymbol = require('../../default-symbol');
+const getAsList = require('../../iterable/get-as-list');
+const getAttributeValue = require('./../get-attribute-value');
+const runMapAsSwitch = require('../../run-map-as-switch');
 
 const getValueFnsByType = new Map([
   ['checkbox', isChecked_],
