@@ -2,9 +2,9 @@ const defaultSymbol = require('./default-symbol');
 
 function runMapAsSwitch(map, key, ...args) {
   if (map.has(key)) {
-    map.get(key)(...args);
+    return map.get(key)(...args);
   } else {
-    map.get(defaultSymbol)(...args);
+    return map.get(defaultSymbol)(...args);
   }
 }
 
