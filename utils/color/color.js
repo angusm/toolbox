@@ -66,8 +66,8 @@ class Color {
   }
 
   toStyleString() {
-    const rgb = this.getRGB();
-    return `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, ${this.alpha_})`;
+    const values = [...this.getRGB().getValues(), this.alpha_];
+    return `rgba(${values.join(', ')})`;
   }
 }
 
