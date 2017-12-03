@@ -4,6 +4,8 @@ const hexToInt = require('../hex-to-int');
 const max = require('../iterable/max');
 const trim = require('../string/trim');
 
+const HEX_VALUES = '0123456789abcdefABCDEF';
+
 class RGB extends Vector {
   constructor(red = 0, green = 0, blue = 0) {
     super(red, green, blue);
@@ -21,7 +23,7 @@ class Color {
   }
 
   static fromString(value) {
-    if (value[0] === '#') {
+    if (value[0] === '#' || Color.isHexValue_(value)) {
       return this.fromHex_(value);
     } else if (value.slice(0, 3) === 'rgb') {
       return this.fromRgb_(value);
@@ -44,6 +46,11 @@ class Color {
     const values = value.split('(').slice(-1)[0].split(')')[0].split(',');
     const intValues = values.map(trim).map(parseInt);
     return new Color(...intValues);
+  }
+
+  static isHexValue_(value) {
+    return value
+      .split('').every((character) => HEX_VALUES.indexOf(character) !== -1);
   }
 
   getRGB() {
