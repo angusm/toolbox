@@ -1,3 +1,4 @@
+const ColorMap = require('./color-map');
 const Vector = require('../math/geometry/vector');
 const getSubstringsOfLength = require('../string/get-substrings-of-length');
 const hexToInt = require('../hex-to-int');
@@ -27,6 +28,8 @@ class Color {
       return this.fromHex_(value);
     } else if (value.slice(0, 3) === 'rgb') {
       return this.fromRgb_(value);
+    } else if (ColorMap.get(value)) {
+      return this.fromHex_(ColorMap.get(value));
     } else {
       console.error('Invalid string provided to Color.fromString');
     }
