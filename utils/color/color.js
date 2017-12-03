@@ -44,7 +44,7 @@ class Color {
 
   static fromRgb_(value) {
     const values = value.split('(').slice(-1)[0].split(')')[0].split(',');
-    const intValues = values.map(trim).map(parseInt);
+    const intValues = values.map(trim).map((trimmed) => parseInt(trimmed));
     return new Color(...intValues);
   }
 
