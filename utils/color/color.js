@@ -54,6 +54,11 @@ class Color {
     return max(
       colors, (color) => color.getRGB().subtract(this.getRGB()).getLength());
   }
+
+  toStyleString() {
+    const rgb = this.getRGB();
+    return `rgba(${rgb.red}, ${rgb.green}, ${rgb.blue}, ${this.alpha_})`;
+  }
 }
 
 module.exports = Color;
