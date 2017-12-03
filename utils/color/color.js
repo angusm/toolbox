@@ -23,7 +23,7 @@ class Color {
   }
 
   static fromString(value) {
-    if (value[0] === '#' || Color.isHexValue_(value)) {
+    if (Color.isHexValue_(value)) {
       return this.fromHex_(value);
     } else if (value.slice(0, 3) === 'rgb') {
       return this.fromRgb_(value);
@@ -49,6 +49,9 @@ class Color {
   }
 
   static isHexValue_(value) {
+    if (value[0] === '#') {
+      value = value.slice(1);
+    }
     return value
       .split('').every((character) => HEX_VALUES.indexOf(character) !== -1);
   }
