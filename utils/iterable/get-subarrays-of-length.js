@@ -1,6 +1,6 @@
 function getSubarraysOfLength(value, length) {
   const result = [];
-  while (value) {
+  while (value.length) {
     result.push(value.slice(0, length));
     value = value.slice(length)
   }
