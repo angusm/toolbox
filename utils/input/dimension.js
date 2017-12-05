@@ -1,6 +1,11 @@
-const CachedElementVector2d = require('./cached-element-vector-2d');
+const CachedElementVector = require('./cached-element-vector');
+const Dimensions2d = require('../math/geometry/dimensions-2d');
 
-class Dimension extends CachedElementVector2d {
+class Dimension extends CachedElementVector {
+  constructor(element = null) {
+    super(element, Dimensions2d);
+  }
+
   getDimensions() {
     return this.getCurrentVector_();
   }

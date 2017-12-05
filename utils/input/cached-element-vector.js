@@ -1,12 +1,11 @@
 const DynamicDefaultMap = require('../map/dynamic-default');
-const Vector2d = require('../math/geometry/vector-2d');
+const Vector = require('../math/geometry/vector');
 const renderLoop = require('../render-loop');
 
-const ZERO_VECTOR = new Vector2d();
 const VALUE_LIMIT = 2;
 
-class CachedElementVector2d {
-  constructor(element = null) {
+class CachedElementVector {
+  constructor(element = null, VectorClass = Vector) {
     if (this.constructor.getInstancesByElement_().has(element)) {
       if (element) {
         console.error('Please use getForElement instead of new.');
@@ -14,8 +13,9 @@ class CachedElementVector2d {
         console.error('Please use getSingleton instead of new.');
       }
     }
+    this.VectorClass_ = VectorClass;
     this.element_ = element;
-    this.values_ = [ZERO_VECTOR];
+    this.values_ = [new VectorClass()];
     this.init_();
   }
 
@@ -42,7 +42,7 @@ class CachedElementVector2d {
   }
 
   getCurrentVector_() {
-    return new Vector2d(
+    return new this.VectorClass_(
       this.getFirstVectorValue_(), this.getSecondVectorValue_());
   }
 
@@ -60,11 +60,11 @@ class CachedElementVector2d {
   }
 
   getDelta() {
-    return Vector2d.subtract(...this.getCurrentAndLastValue_());
+    return this.VectorClass_.subtract(...this.getCurrentAndLastValue_());
   }
 
   hasChanged() {
-    return !Vector2d.areEqual(...this.getCurrentAndLastValue_());
+    return !this.VectorClass_.areEqual(...this.getCurrentAndLastValue_());
   }
 
   static getValueLimit() {
@@ -80,4 +80,4 @@ class CachedElementVector2d {
   }
 }
 
-module.exports = CachedElementVector2d;
+module.exports = CachedElementVector;
