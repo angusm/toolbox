@@ -1,3 +1,4 @@
+const frameMemoize = require('../../frame-memoize');
 const getVisibleDistanceFromAncestor = require('./get-visible-distance-from-ancestor');
 
 function getVisibleDistanceBetweenElements(a, b) {
@@ -5,4 +6,4 @@ function getVisibleDistanceBetweenElements(a, b) {
         .subtract(getVisibleDistanceFromAncestor(b, null));
 }
 
-module.exports = getVisibleDistanceBetweenElements;
+module.exports = frameMemoize(getVisibleDistanceBetweenElements);
