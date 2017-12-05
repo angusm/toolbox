@@ -16,7 +16,7 @@ const STEP_ORDER = Object.freeze([
   Step.CLEANUP,
 ]);
 
-const FPS = 60;
+const FPS = 24;
 
 class RenderFunction {
   constructor(step) {
@@ -33,6 +33,7 @@ class RenderLoop {
   constructor() {
     this.scheduledFns_ = DynamicDefaultMap.usingFunction(() => new Map());
     this.lastRunTime_ = new Date(0);
+    this.fps_ = FPS;
     this.runLoop_();
   }
 
@@ -56,6 +57,10 @@ class RenderLoop {
     return this.addFnToStep_(fn, Step.CLEANUP);
   }
 
+  setFps(fps) {
+    this.fps_ = fps;
+  }
+
   addFnToStep_(fn, step) {
     const renderFn = new RenderFunction(step);
     this.scheduledFns_.get(step).set(renderFn, fn);
@@ -63,7 +68,7 @@ class RenderLoop {
   }
 
   getTimeUntilNextRun_() {
-    return this.lastRunTime_ + 1000 / FPS - new Date();
+    return this.lastRunTime_ + 1000 / this.fps_ - new Date();
   }
 
   runLoop_() {
