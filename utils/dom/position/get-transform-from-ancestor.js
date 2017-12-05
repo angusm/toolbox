@@ -12,4 +12,4 @@ function getTransformFromAncestor(element, ancestor) {
   }
 }
 
-module.exports = getTransformFromAncestor;
+module.exports = memoized;
