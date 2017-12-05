@@ -1,14 +1,15 @@
 const Vector2d = require('../../math/geometry/vector-2d');
 const frameMemoize = require('../../frame-memoize');
-const getOffsetAncestors = require('./get-offset-ancestors');
+
+const memoized = frameMemoize(getOffsetFromAncestor);
 
 function getOffsetFromAncestor(element, ancestor) {
-    return getOffsetAncestors(element, ancestor).reduce(
-        (result, element) => {
-            return result.add(Vector2d.fromElementOffset(element));
-        },
-        new Vector2d(0, 0)
-    );
+  if (element === ancestor) {
+    return new Vector2d(0, 0);
+  } else {
+    return Vector2d.fromElementOffset(element)
+      .add(memoized(element.offsetParent, ancestor));
+  }
 }
 
-module.exports = frameMemoize(getOffsetFromAncestor);
+module.exports = memoized;
