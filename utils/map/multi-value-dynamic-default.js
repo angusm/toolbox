@@ -5,10 +5,10 @@ class MultiValueDynamicDefaultMap extends MultiValueMap {
   constructor(iterable = [],
               InnerMapClass = Map,
               defaultFunction = doNothing) {
-    super(
-      iterable,
+    super();
+    this.replaceInnerMap_(
       new DynamicDefaultMap(
-        [], InnerMapClass, this.expandDefaultFunction_(defaultFunction)));
+        iterable, InnerMapClass, this.expandDefaultFunction_(defaultFunction)));
   }
 
   expandDefaultFunction_(defaultFunction) {

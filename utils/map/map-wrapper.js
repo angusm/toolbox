@@ -6,6 +6,10 @@ class MapWrapper {
     [...iterable].forEach(([key, value]) => this.map_.set(key, value));
   }
 
+  replaceInnerMap_(innerMap) {
+    this.map_ = innerMap;
+  }
+
   get length() {
     return this.map_.length;
   }
