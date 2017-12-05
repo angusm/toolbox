@@ -14,4 +14,4 @@ function getVisibleDistanceFromAncestor(element, ancestor) {
   }
 }
 
-module.exports = getVisibleDistanceFromAncestor;
+module.exports = memoized;
