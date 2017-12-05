@@ -4,7 +4,7 @@ const frameMemoize = require('../../frame-memoize');
 const memoized = frameMemoize(getTransformFromAncestor);
 
 function getTransformFromAncestor(element, ancestor) {
-  if (element === ancestor) {
+  if (!element || element === ancestor) {
     return new Vector2d(0, 0);
   } else {
     return Vector2d.fromElementTransform(element)

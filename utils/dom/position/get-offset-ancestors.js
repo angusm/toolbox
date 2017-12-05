@@ -1,11 +1,13 @@
 const frameMemoize = require('../../frame-memoize');
 
+const memoized = frameMemoize(getOffsetAncestors);
+
 function getOffsetAncestors(element, terminusAncestor = null) {
     if (!element || element === terminusAncestor) {
         return [];
     }
     return [element].concat(
-        getOffsetAncestors(element.offsetParent, terminusAncestor));
+        memoized(element.offsetParent, terminusAncestor));
 }
 
-module.exports = frameMemoize(getOffsetAncestors);
+module.exports = memoized;
