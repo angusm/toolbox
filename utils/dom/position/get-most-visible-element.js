@@ -1,4 +1,4 @@
-const getOpacity = require('../get-opacity');
+const getOpacity = require('../style/get-opacity');
 const getVisibleArea = require('./get-visible-area');
 const max = require('../../iterable/max');
 

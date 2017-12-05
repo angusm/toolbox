@@ -1,5 +1,5 @@
 const Transition = require('./base');
-const getOpacity = require('../../../utils/dom/get-opacity');
+const getOpacity = require('../../../utils/dom/style/get-opacity');
 const renderLoop = require('../../../utils/render-loop');
 
 class Fade extends Transition {

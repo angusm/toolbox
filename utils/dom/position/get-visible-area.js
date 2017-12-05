@@ -1,4 +1,4 @@
-const getOpacity = require('../get-opacity');
+const getOpacity = require('../style/get-opacity');
 const getVisibleHeight = require('./get-visible-height');
 const getVisibleWidth = require('./get-visible-width');
 
