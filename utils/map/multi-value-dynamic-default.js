@@ -20,4 +20,4 @@ class MultiValueDynamicDefaultMap extends MultiValueMap {
   }
 }
 
-module.exports = MultiValueMap;
+module.exports = MultiValueDynamicDefaultMap;
