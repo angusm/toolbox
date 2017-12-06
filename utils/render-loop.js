@@ -16,7 +16,7 @@ const STEP_ORDER = Object.freeze([
   Step.CLEANUP,
 ]);
 
-const FPS = 24;
+const FPS = 60;
 
 class RenderFunction {
   constructor(step) {
