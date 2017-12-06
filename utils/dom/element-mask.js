@@ -3,10 +3,14 @@
  * should otherwise be large amounts of inline content.
  * Created by angusm on 05/12/17.
  */
-
+const Dimensions2d = require('../math/geometry/dimensions-2d');
+const Range = require('../range');
+const Scroll = require('../input/scroll');
 const getVisibleDimensions = require('./position/get-visible-dimensions');
 const getVisibleDistanceFromAncestor = require('./position/get-visible-distance-from-ancestor');
 const renderLoop = require('../render-loop');
+
+const scroll = Scroll.getSingleton();
 
 class ElementMask{
   constructor(fixedElement, maskElement) {
@@ -23,7 +27,7 @@ class ElementMask{
 
   initFixedElement_() {
     renderLoop.mutate(() => {
-      this.fixedEl_.style.position = 'fixed';
+      this.fixedEl_.style.position = 'absolute';
       this.fixedEl_.style.left = 0;
       this.fixedEl_.style.top = 0;
       this.fixedEl_.style.right = 'auto';
@@ -40,13 +44,42 @@ class ElementMask{
       return;
     }
     renderLoop.measure(() => {
-      const dimensions = getVisibleDimensions(this.maskEl_);
-      const position = getVisibleDistanceFromAncestor(this.maskEl_);
-      renderLoop.mutate(() => {
-        position.positionElement(this.fixedEl_);
-        dimensions.sizeElement(this.fixedEl_);
-      });
+      if (position.y <= scroll.getPosition().y) {
+        this.renderAbsolute_();
+      } else {
+        this.renderFixed_();
+      }
       renderLoop.cleanup(() => this.render_());
+    });
+  }
+
+  renderAbsolute_() {
+    const dimensions = getVisibleDimensions(this.maskEl_);
+    const position =
+      getVisibleDistanceFromAncestor(this.maskEl_)
+        .subtract(scroll.getPosition());
+    const clippedDimensions =
+      new Dimensions2d(
+        Math.min(window.innerWidth - position.x, dimensions.width),
+        Math.min(window.innerHeight - position.y, dimensions.height));
+    renderLoop.mutate(() => {
+      this.fixedEl_.style.position = 'absolute';
+      position.positionElement(this.fixedEl_);
+      clippedDimensions.sizeElement(this.fixedEl_);
+    });
+  }
+
+  renderFixed_() {
+    const dimensions = getVisibleDimensions(this.maskEl_);
+    const position = getVisibleDistanceFromAncestor(this.maskEl_);
+    const clippedPosition =
+      new Vector2d(
+        new Range(0, window.innerWidth).clamp(position.x),
+        new Range(0, window.innerHeight).clamp(position.y));
+    renderLoop.mutate(() => {
+      this.fixedEl_.style.position = 'fixed';
+      clippedPosition.positionElement(this.fixedEl_);
+      dimensions.sizeElement(this.fixedEl_);
     });
   }
 }
