@@ -40,8 +40,8 @@ class ElementMask{
       return;
     }
     renderLoop.measure(() => {
-      const dimensions = getVisibleDimensions(this.maskEl_, null);
-      const position = getVisibleDistanceFromAncestor(this.maskEl_, null);
+      const dimensions = getVisibleDimensions(this.maskEl_);
+      const position = getVisibleDistanceFromAncestor(this.maskEl_);
       renderLoop.mutate(() => {
         position.positionElement(this.fixedEl_);
         dimensions.sizeElement(this.fixedEl_);
