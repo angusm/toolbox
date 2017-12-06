@@ -14,7 +14,9 @@ class Scroll extends CachedElementVector {
     if (this.element_) {
       return this.element_.scrollLeft;
     } else {
-      return window.pageXOffset || document.body.scrollLeft;
+      return window.pageXOffset ||
+        document.body.scrollLeft ||
+        document.documentElement.scrollLeft;
     }
   }
 
@@ -22,7 +24,9 @@ class Scroll extends CachedElementVector {
     if (this.element_) {
       return this.element_.scrollTop;
     } else {
-      return window.pageYOffset || document.body.scrollTop;
+      return window.pageYOffset ||
+        document.body.scrollTop ||
+        document.documentElement.scrollTop;
     }
   }
 
