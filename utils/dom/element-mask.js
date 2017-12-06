@@ -59,14 +59,10 @@ class ElementMask{
     const dimensions = getVisibleDimensions(this.maskEl_);
     const position =
       getVisibleDistanceFromAncestor(this.maskEl_).add(scroll.getPosition());
-    const clippedDimensions =
-      new Dimensions2d(
-        Math.min(window.innerWidth - position.x, dimensions.width),
-        Math.min(window.innerHeight - position.y, dimensions.height));
     renderLoop.mutate(() => {
       this.fixedEl_.style.position = 'absolute';
       position.positionElement(this.fixedEl_);
-      clippedDimensions.sizeElement(this.fixedEl_);
+      dimensions.sizeElement(this.fixedEl_);
     });
   }
 
