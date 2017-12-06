@@ -46,7 +46,7 @@ class ElementMask{
     }
     renderLoop.measure(() => {
       const position = getVisibleDistanceFromAncestor(this.maskEl_);
-      if (position.y <= scroll.getPosition().y) {
+      if (position.y >= scroll.getPosition().y) {
         this.renderAbsolute_();
       } else {
         this.renderFixed_();
