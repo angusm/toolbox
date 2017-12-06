@@ -20,13 +20,9 @@ function getVisibleDistanceFromAncestor_(element, ancestor) {
 }
 
 function getVisibleDistanceFromAncestor(element, ancestor) {
-  if (!element) {
-    return ZERO_VECTOR
-  } else {
-    return Vector2d.add(
-      Vector2d.fromElementScroll(element),
-      memoized_(element, ancestor));
-  }
+  return Vector2d.add(
+    Vector2d.fromElementScroll(element),
+    memoized_(element, ancestor));
 }
 
 module.exports = memoized;
