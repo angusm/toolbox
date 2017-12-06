@@ -9,12 +9,12 @@ function getVisibleDistanceFromAncestor_(element, ancestor) {
   if (!element) {
     return ZERO_VECTOR;
   } else if (element === ancestor) {
-    return Vector2d.fromElementScroll(element).inverse();
+    return Vector2d.fromElementScroll(element).invert();
   } else {
     return Vector2d.add(
       Vector2d.fromElementOffset(element),
       Vector2d.fromElementTransform(element),
-      Vector2d.fromElementScroll(element).inverse(),
+      Vector2d.fromElementScroll(element).invert(),
       memoized_(element.offsetParent, ancestor));
   }
 }
