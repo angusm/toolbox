@@ -46,7 +46,7 @@ class ElementMask{
     }
     renderLoop.measure(() => {
       const position = getVisibleDistanceFromAncestor(this.maskEl_);
-      if (position.y >= scroll.getPosition().y) {
+      if (position.y >= 0) {
         this.renderAbsolute_();
       } else {
         this.renderFixed_();
@@ -58,8 +58,7 @@ class ElementMask{
   renderAbsolute_() {
     const dimensions = getVisibleDimensions(this.maskEl_);
     const position =
-      getVisibleDistanceFromAncestor(this.maskEl_)
-        .subtract(scroll.getPosition());
+      getVisibleDistanceFromAncestor(this.maskEl_).add(scroll.getPosition());
     const clippedDimensions =
       new Dimensions2d(
         Math.min(window.innerWidth - position.x, dimensions.width),
