@@ -6,6 +6,7 @@
 const Dimensions2d = require('../math/geometry/dimensions-2d');
 const Range = require('../range');
 const Scroll = require('../input/scroll');
+const Vector2d = require('../math/geometry/vector-2d');
 const getVisibleDimensions = require('./position/get-visible-dimensions');
 const getVisibleDistanceFromAncestor = require('./position/get-visible-distance-from-ancestor');
 const renderLoop = require('../render-loop');
