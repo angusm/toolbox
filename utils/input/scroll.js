@@ -25,6 +25,22 @@ class Scroll extends CachedElementVector {
       return window.pageYOffset || document.body.scrollTop;
     }
   }
+
+  isScrollingDown() {
+    return this.getDelta().y > 0;
+  }
+
+  isScrollingUp() {
+    return this.getDelta().y < 0;
+  }
+
+  isScrollingRight() {
+    return this.getDelta().x > 0;
+  }
+
+  isScrollingLeft() {
+    return this.getDelta().x < 0;
+  }
 }
 
 module.exports = Scroll;
