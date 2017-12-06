@@ -3,13 +3,16 @@ const frameMemoize = require('../../frame-memoize');
 
 const memoized = frameMemoize(getVisibleDistanceFromAncestor);
 
-function getVisibleDistanceFromAncestor(element, ancestor) {
+function getVisibleDistanceFromAncestor(
+  element, ancestor
+) {
   if (!element || element === ancestor) {
-    return new Vector2d(0, 0);
+    return Vector2d.fromElementScroll(element).inverse();
   } else {
     return Vector2d.add(
       Vector2d.fromElementOffset(element),
       Vector2d.fromElementTransform(element),
+      Vector2d.fromElementScroll(element),
       memoized(element.offsetParent, ancestor));
   }
 }

@@ -22,8 +22,17 @@ class Vector2d extends Vector {
         return new Vector2d(matrix.translateX, matrix.translateY);
     }
 
+    static fromElementScroll(element) {
+        return new Vector2d(element.scrollLeft, element.scrollTop);
+    }
+
     static fromElementTransform(element) {
         return Vector2d.fromMatrix(Matrix.fromElementTransform(element));
+    }
+
+    positionElement(element) {
+        element.style.left = `${this.x}px`;
+        element.style.top = `${this.y}px`;
     }
 
     toString() {

@@ -13,6 +13,11 @@ class Dimensions2D extends Vector {
         return this.getValues()[1];
     }
 
+    sizeElement(element) {
+        element.style.width = `${this.width}px`;
+        element.style.height = `${this.height}px`;
+    }
+
     static fromElementOffset(element) {
         return new Dimensions2D(element.offsetWidth, element.offsetHeight);
     }
