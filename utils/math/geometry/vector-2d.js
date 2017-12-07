@@ -35,6 +35,10 @@ class Vector2d extends Vector {
         element.style.top = `${this.y}px`;
     }
 
+    positionElementByTranslation(element) {
+        element.style.transform = `translate(${this.x}px, ${this.y})`;
+    }
+
     toString() {
         return `X: ${this.x}, Y: ${this.y}`;
     }

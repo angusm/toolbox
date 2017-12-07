@@ -11,6 +11,8 @@ const getVisibleDimensions = require('./position/get-visible-dimensions');
 const getVisibleDistanceFromAncestor = require('./position/get-visible-distance-from-ancestor');
 const renderLoop = require('../render-loop');
 
+const ZERO_VECTOR = new Vector2d();
+
 const scroll = Scroll.getSingleton();
 
 class ElementMask{
@@ -60,7 +62,7 @@ class ElementMask{
     const position =
       getVisibleDistanceFromAncestor(this.maskEl_).add(scroll.getPosition());
     renderLoop.mutate(() => {
-      this.fixedEl_.style.position = 'absolute';
+      this.fixedEl_.style.transform = 'none';
       position.positionElement(this.fixedEl_);
       dimensions.sizeElement(this.fixedEl_);
     });
@@ -74,8 +76,8 @@ class ElementMask{
         new Range(0, window.innerWidth).clamp(position.x),
         new Range(0, window.innerHeight).clamp(position.y));
     renderLoop.mutate(() => {
-      this.fixedEl_.style.position = 'fixed';
-      clippedPosition.positionElement(this.fixedEl_);
+      ZERO_VECTOR.positionElement(this.fixedEl_);
+      clippedPosition.positionElementByTranslation(this.fixedEl_);
       dimensions.sizeElement(this.fixedEl_);
     });
   }
