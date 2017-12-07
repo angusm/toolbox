@@ -3,22 +3,27 @@
  * should otherwise be large amounts of inline content.
  * Created by angusm on 05/12/17.
  */
+const Dimension = require('../cached-vectors/dimension');
 const Dimensions2d = require('../math/geometry/dimensions-2d');
 const Range = require('../range');
-const Scroll = require('../input/scroll');
+const Scroll = require('../cached-vectors/scroll');
 const Vector2d = require('../math/geometry/vector-2d');
 const getVisibleDimensions = require('./position/get-visible-dimensions');
 const getVisibleDistanceFromAncestor = require('./position/get-visible-distance-from-ancestor');
 const renderLoop = require('../render-loop');
 
+const ZERO_DIMENSIONS = new Dimensions2d();
 const ZERO_VECTOR = new Vector2d();
 
-const scroll = Scroll.getSingleton();
+const windowDimension = Dimension.getSingleton();
+const windowScroll = Scroll.getSingleton();
 
 class ElementMask{
   constructor(fixedElement, maskElement) {
     this.fixedEl_ = fixedElement;
     this.maskEl_ = maskElement;
+    this.maskPosition_ = ZERO_VECTOR;
+    this.maskDimensions_ = ZERO_DIMENSIONS;
     this.stopped_ = false;
     this.init_();
   }
@@ -47,7 +52,7 @@ class ElementMask{
       return;
     }
     renderLoop.measure(() => {
-      const position = getVisibleDistanceFromAncestor(this.maskEl_);
+      this.maskPosition_ = getVisibleDistanceFromAncestor(this.maskEl_);
       if (position.y >= 0) {
         this.renderAbsolute_();
       } else {
@@ -60,7 +65,7 @@ class ElementMask{
   renderAbsolute_() {
     const dimensions = getVisibleDimensions(this.maskEl_);
     const position =
-      getVisibleDistanceFromAncestor(this.maskEl_).add(scroll.getPosition());
+      getVisibleDistanceFromAncestor(this.maskEl_).add(windowScroll.getPosition());
     renderLoop.mutate(() => {
       this.fixedEl_.style.transform = 'none';
       position.positionElementByTranslation(this.fixedEl_);

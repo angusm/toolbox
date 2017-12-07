@@ -1,4 +1,4 @@
-const Scroll = require('../../input/scroll');
+const Scroll = require('../../cached-vectors/scroll');
 const Vector2d = require('../../math/geometry/vector-2d');
 const frameMemoize = require('../../frame-memoize');
 
