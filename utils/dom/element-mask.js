@@ -3,19 +3,21 @@
  * should otherwise be large amounts of inline content.
  * Created by angusm on 05/12/17.
  */
+const Dimension = require('../cached-vectors/dimension');
 const Range = require('../range');
 const Scroll = require('../cached-vectors/scroll');
 const Vector2d = require('../math/geometry/vector-2d');
-const getVisibleDimensions = require('./position/get-visible-dimensions');
-const getVisibleDistanceFromAncestor = require('./position/get-visible-distance-from-ancestor');
+const VisibleDistance = require('../cached-vectors/visible-distance');
 const renderLoop = require('../render-loop');
 
+const windowDimensions = Dimension.getSingleton();
 const windowScroll = Scroll.getSingleton();
 
 class ElementMask{
   constructor(fixedElement, maskElement) {
     this.fixedEl_ = fixedElement;
-    this.maskEl_ = maskElement;
+    this.maskDimensions_ = Dimension.getForElement(maskElement);
+    this.maskPosition_ = VisibleDistance.getForElement(maskElement);
     this.stopped_ = false;
     this.init_();
   }
@@ -44,8 +46,7 @@ class ElementMask{
       return;
     }
     renderLoop.measure(() => {
-      const position = getVisibleDistanceFromAncestor(this.maskEl_);
-      if (position.y >= 0) {
+      if (this.maskPosition_.getDistance().y >= 0) {
         this.renderAbsolute_();
       } else {
         this.renderFixed_();
@@ -55,26 +56,25 @@ class ElementMask{
   }
 
   renderAbsolute_() {
-    const dimensions = getVisibleDimensions(this.maskEl_);
     const position =
-      getVisibleDistanceFromAncestor(this.maskEl_).add(windowScroll.getPosition());
+      this.maskPosition_.getDistance().add(windowScroll.getPosition());
     renderLoop.mutate(() => {
       this.fixedEl_.style.transform = 'none';
       position.positionElementByTranslation(this.fixedEl_);
-      dimensions.sizeElement(this.fixedEl_);
+      this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);
     });
   }
 
   renderFixed_() {
-    const dimensions = getVisibleDimensions(this.maskEl_);
-    const position = getVisibleDistanceFromAncestor(this.maskEl_);
+    const position = this.maskPosition_.getDistance();
     const clippedPosition =
       new Vector2d(
-        new Range(0, window.innerWidth).clamp(position.x),
-        new Range(0, window.innerHeight).clamp(position.y));
+        new Range(0, windowDimensions.getDimensions().width).clamp(position.x),
+        new Range(0, windowDimensions.getDimensions().height).clamp(position.y))
+          .add(windowScroll.getPosition());
     renderLoop.mutate(() => {
       clippedPosition.positionElementByTranslation(this.fixedEl_);
-      dimensions.sizeElement(this.fixedEl_);
+      this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);
     });
   }
 }
