@@ -7,7 +7,7 @@ class VisibleDimensions extends CachedElementVector {
     super(element, Dimensions2d);
   }
 
-  getDistance() {
+  getDimensions() {
     return this.getCurrentVector_();
   }
 
