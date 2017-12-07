@@ -77,8 +77,14 @@ class ElementMask{
     }
 
     renderLoop.mutate(() => {
-      clippedPosition.positionElementByTranslation(this.fixedEl_);
-      bufferedDimensions.sizeElement(this.fixedEl_);
+      // Ensure hidden elements stay hidden
+      if (bufferedDimensions.getLength()) {
+        clippedPosition.positionElementByTranslation(this.fixedEl_);
+        bufferedDimensions.sizeElement(this.fixedEl_);
+        this.fixedEl_.style.visibility = 'initial';
+      } else {
+        this.fixedEl_.style.visibility = 'hidden';
+      }
     });
   }
 }
