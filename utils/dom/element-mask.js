@@ -78,7 +78,7 @@ class ElementMask{
 
     renderLoop.mutate(() => {
       // Ensure hidden elements stay hidden
-      if (bufferedDimensions.getLength()) {
+      if (bufferedDimensions.getArea()) {
         clippedPosition.positionElementByTranslation(this.fixedEl_);
         bufferedDimensions.sizeElement(this.fixedEl_);
         this.fixedEl_.style.visibility = 'initial';

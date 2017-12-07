@@ -26,6 +26,10 @@ class Dimensions2D extends Vector {
     asRanges() {
         return [new Range(0, this.width), new Range(0, this.height)];
     }
+
+    getArea() {
+        return this.width * this.height;
+    }
 }
 
 module.exports = Dimensions2D;
