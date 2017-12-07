@@ -68,10 +68,13 @@ class ElementMask{
         .clamp(widthRange, heightRange)
         .add(windowScroll.getPosition());
 
-    const bufferedDimensions =
-      this.maskVisibleDimensions_.getDimensions()
-        .add(new Dimensions2d(this.buffer_, this.buffer_))
-        .clamp(...this.maskDimensions_.getDimensions().asRanges());
+    let bufferedDimensions = new Dimensions2d();
+    if (this.maskVisibleDimensions_.getDimensions().getLength() != 0) {
+      bufferedDimensions =
+        this.maskVisibleDimensions_.getDimensions()
+          .add(new Dimensions2d(this.buffer_, this.buffer_))
+          .clamp(...this.maskDimensions_.getDimensions().asRanges());
+    }
 
     renderLoop.mutate(() => {
       clippedPosition.positionElementByTranslation(this.fixedEl_);
