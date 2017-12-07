@@ -36,7 +36,7 @@ class Vector2d extends Vector {
     }
 
     positionElementByTranslation(element) {
-        element.style.transform = `translate(${this.x}px, ${this.y})`;
+        element.style.transform = `translate(${this.x}px, ${this.y}px)`;
     }
 
     toString() {
