@@ -1,3 +1,4 @@
+const Range = require('../../range');
 const Vector = require('./vector');
 
 class Dimensions2D extends Vector {
@@ -20,6 +21,10 @@ class Dimensions2D extends Vector {
 
     static fromElementOffset(element) {
         return new Dimensions2D(element.offsetWidth, element.offsetHeight);
+    }
+
+    asRanges() {
+        return [new Range(0, this.width), new Range(0, this.height)];
     }
 }
 

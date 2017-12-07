@@ -4,6 +4,7 @@
  * Created by angusm on 05/12/17.
  */
 const Dimensions = require('../cached-vectors/dimensions');
+const Dimensions2d = require('../math/geometry/dimensions-2d');
 const Range = require('../range');
 const Scroll = require('../cached-vectors/scroll');
 const VisibleDimensions = require('../cached-vectors/visible-dimensions');
@@ -14,11 +15,13 @@ const windowDimensions = Dimensions.getSingleton();
 const windowScroll = Scroll.getSingleton();
 
 class ElementMask{
-  constructor(fixedElement, maskElement) {
+  constructor(fixedElement, maskElement, buffer = 0) {
     this.fixedEl_ = fixedElement;
-    this.maskDimensions_ = VisibleDimensions.getForElement(maskElement);
+    this.maskDimensions_ = Dimensions.getForElement(maskElement);
+    this.maskVisibleDimensions_ = VisibleDimensions.getForElement(maskElement);
     this.maskPosition_ = VisibleDistance.getForElement(maskElement);
     this.stopped_ = false;
+    this.buffer_ = buffer;
     this.init_();
   }
 
@@ -46,36 +49,33 @@ class ElementMask{
       return;
     }
     renderLoop.measure(() => {
-      if (this.maskPosition_.getDistance().y >= 0) {
-        this.renderAbsolute_();
-      } else {
-        this.renderFixed_();
-      }
+      this.renderFixed_();
       renderLoop.cleanup(() => this.render_());
     });
   }
 
-  renderAbsolute_() {
-    const position =
-      this.maskPosition_.getDistance().add(windowScroll.getPosition());
-    renderLoop.mutate(() => {
-      position.positionElementByTranslation(this.fixedEl_);
-      this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);
-    });
+  getWindowDimensionRanges_() {
+    return windowDimensions.getDimensions()
+      .asRanges()
+      .map((range) => range.expand(this.buffer_));
   }
 
   renderFixed_() {
-    const widthRange = new Range(0, windowDimensions.getDimensions().width);
-    const heightRange = new Range(0, windowDimensions.getDimensions().height);
+    const [widthRange, heightRange] = this.getWindowDimensionRanges_();
 
     const clippedPosition =
       this.maskPosition_.getDistance()
         .clamp(widthRange, heightRange)
         .add(windowScroll.getPosition());
 
+    const bufferedDimensions =
+      this.maskVisibleDimensions_.getDimensions()
+        .add(new Dimensions2d(this.buffer_, this.buffer_))
+        .clamp(...this.maskDimensions_.getDimensions().asRanges());
+
     renderLoop.mutate(() => {
       clippedPosition.positionElementByTranslation(this.fixedEl_);
-      this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);
+      bufferedDimensions.sizeElement(this.fixedEl_);
     });
   }
 }
