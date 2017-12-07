@@ -63,7 +63,7 @@ class ElementMask{
       getVisibleDistanceFromAncestor(this.maskEl_).add(scroll.getPosition());
     renderLoop.mutate(() => {
       this.fixedEl_.style.transform = 'none';
-      position.positionElement(this.fixedEl_);
+      position.positionElementByTranslation(this.fixedEl_);
       dimensions.sizeElement(this.fixedEl_);
     });
   }
@@ -76,7 +76,6 @@ class ElementMask{
         new Range(0, window.innerWidth).clamp(position.x),
         new Range(0, window.innerHeight).clamp(position.y));
     renderLoop.mutate(() => {
-      ZERO_VECTOR.positionElement(this.fixedEl_);
       clippedPosition.positionElementByTranslation(this.fixedEl_);
       dimensions.sizeElement(this.fixedEl_);
     });
