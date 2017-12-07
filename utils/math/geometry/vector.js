@@ -26,6 +26,17 @@ class Vector {
     return this.constructor.invert(this);
   }
 
+  static clamp(vector, ...ranges) {
+    const zippedValuesAndRanges = zip(vector.getValues(), ranges);
+    const clampedValues = zippedValuesAndRanges.map(
+      ([value, range]) => range ? range.clamp(value) : value);
+    return new this[Symbol.species](...clampedValues);
+  }
+
+  clamp(...ranges) {
+    return this.constructor.clamp(this, ...ranges);
+  }
+
   static subtract(minuend, ...subtrahends) {
     return this.add(
       minuend, ...subtrahends.map((subtrahend) => subtrahend.invert()));
@@ -51,6 +62,10 @@ class Vector {
     return vectors.reduce((acc, vector, index) => {
       return index ? [...acc, vectors[index - 1].subtract(vector)] : acc;
     }, []);
+  }
+
+  static fromVector(vector) {
+    return new this[Symbol.species](...vector.getValues());
   }
 
   static scale(vector, amount) {

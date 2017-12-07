@@ -1,10 +1,10 @@
-const Dimension = require('../dimension');
+const Dimensions = require('../dimensions');
 const Scroll = require('../scroll');
 const cursor = require('../cursor');
 const renderLoop = require('../../render-loop');
 
 const scroll = Scroll.getSingleton();
-const dimension = Dimension.getSingleton();
+const dimension = Dimensions.getSingleton();
 
 function update() {
   renderLoop.mutate(() => {

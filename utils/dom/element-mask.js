@@ -3,20 +3,20 @@
  * should otherwise be large amounts of inline content.
  * Created by angusm on 05/12/17.
  */
-const Dimension = require('../cached-vectors/dimension');
+const Dimensions = require('../cached-vectors/dimensions');
 const Range = require('../range');
 const Scroll = require('../cached-vectors/scroll');
-const Vector2d = require('../math/geometry/vector-2d');
+const VisibleDimensions = require('../cached-vectors/visible-dimensions');
 const VisibleDistance = require('../cached-vectors/visible-distance');
 const renderLoop = require('../render-loop');
 
-const windowDimensions = Dimension.getSingleton();
+const windowDimensions = Dimensions.getSingleton();
 const windowScroll = Scroll.getSingleton();
 
 class ElementMask{
   constructor(fixedElement, maskElement) {
     this.fixedEl_ = fixedElement;
-    this.maskDimensions_ = Dimension.getForElement(maskElement);
+    this.maskDimensions_ = VisibleDimensions.getForElement(maskElement);
     this.maskPosition_ = VisibleDistance.getForElement(maskElement);
     this.stopped_ = false;
     this.init_();
@@ -66,12 +66,14 @@ class ElementMask{
   }
 
   renderFixed_() {
-    const position = this.maskPosition_.getDistance();
+    const widthRange = new Range(0, windowDimensions.getDimensions().width);
+    const heightRange = new Range(0, windowDimensions.getDimensions().height);
+
     const clippedPosition =
-      new Vector2d(
-        new Range(0, windowDimensions.getDimensions().width).clamp(position.x),
-        new Range(0, windowDimensions.getDimensions().height).clamp(position.y))
-          .add(windowScroll.getPosition());
+      this.maskPosition_.getDistance()
+        .clamp(widthRange, heightRange)
+        .add(windowScroll.getPosition());
+
     renderLoop.mutate(() => {
       clippedPosition.positionElementByTranslation(this.fixedEl_);
       this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);

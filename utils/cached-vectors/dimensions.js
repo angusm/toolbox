@@ -1,7 +1,7 @@
 const CachedElementVector = require('./cached-element-vector');
 const Dimensions2d = require('../math/geometry/dimensions-2d');
 
-class Dimension extends CachedElementVector {
+class Dimensions extends CachedElementVector {
   constructor(element = null) {
     super(element, Dimensions2d);
   }
@@ -19,4 +19,4 @@ class Dimension extends CachedElementVector {
   }
 }
 
-module.exports = Dimension;
+module.exports = Dimensions;
