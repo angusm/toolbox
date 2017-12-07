@@ -1,7 +1,7 @@
 const Vector = require('./vector');
 
 class Dimensions2D extends Vector {
-    constructor(width, height) {
+    constructor(width = 0, height = 0) {
         super(width, height);
     }
 
