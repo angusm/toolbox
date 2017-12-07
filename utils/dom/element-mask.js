@@ -59,7 +59,6 @@ class ElementMask{
     const position =
       this.maskPosition_.getDistance().add(windowScroll.getPosition());
     renderLoop.mutate(() => {
-      this.fixedEl_.style.transform = 'none';
       position.positionElementByTranslation(this.fixedEl_);
       this.maskDimensions_.getDimensions().sizeElement(this.fixedEl_);
     });
