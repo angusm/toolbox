@@ -14,15 +14,18 @@ function isChecked_(input) {
 }
 
 function getRadioInputValue_(input) {
-  return getAsList(getMatchingRadioInputs_(input)).find(isChecked_);
+  const checkedInput =
+    getAsList(getMatchingRadioInputs_(input)).find(isChecked_);
+  if (checkedInput) {
+    return checkedInput.value;
+  } else {
+    return null;
+  }
 }
 
 function getMatchingRadioInputs_(input) {
   const name = getAttributeValue(input, 'name');
-  const inputs =
-    document.body.querySelectorAll(`input[type="radio"][name="${name}"]`);
-  const checkedInputs = inputs.filter((input) => input.checked);
-  return checkedInputs.slice(-1)[0].value;
+  return document.body.querySelectorAll(`input[type="radio"][name="${name}"]`);
 }
 
 function getInputValue(input) {
