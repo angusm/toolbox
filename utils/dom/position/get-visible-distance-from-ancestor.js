@@ -8,7 +8,7 @@ const memoized_ = frameMemoize(getVisibleDistanceFromAncestor_);
 const ZERO_VECTOR = new Vector2d();
 
 function getVisibleDistanceFromAncestor_(element, ancestor) {
-  if (!element) {
+  if (!element || element === document.body) {
     return ZERO_VECTOR;
   } else if (element === ancestor) {
     return Vector2d.fromElementScroll(element).invert();
