@@ -4,8 +4,7 @@ const getVisibleWidth = require('./get-visible-width');
 
 function getVisibleDimensions(target, container = null) {
   return new Dimensions2d(
-    getVisibleWidth(target, container),
-    getVisibleHeight(target, container));
+    getVisibleWidth(target, container), getVisibleHeight(target, container));
 }
 
 module.exports = getVisibleDimensions;

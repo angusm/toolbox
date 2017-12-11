@@ -81,7 +81,7 @@ class ElementMask{
       if (bufferedDimensions.getArea()) {
         clippedPosition.positionElementByTranslation(this.fixedEl_);
         bufferedDimensions.sizeElement(this.fixedEl_);
-        this.fixedEl_.style.visibility = 'initial';
+        this.fixedEl_.style.visibility = 'visible';
       } else {
         this.fixedEl_.style.visibility = 'hidden';
       }
