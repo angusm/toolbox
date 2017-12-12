@@ -1,6 +1,6 @@
 const EventType = require('../dom/event/event-type');
 const Vector2d = require('../math/geometry/vector-2d');
-const addEventListner = require('../dom/event/add-event-listener');
+const addEventListner = require('../dom/event/add-dom-event-listener');
 const filterUntilFalse = require('../iterable/filter-until-false');
 const filterUntilFirst = require('../iterable/filter-until-first');
 const frame = require('../frame');

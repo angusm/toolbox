@@ -1,8 +1,11 @@
-const EventType = require('../../../utils/dom/event/event-type');
+const Drag = require('../../draggable/events/drag');
+const DragEnd = require('../../draggable/events/drag-end');
+const DragStart = require('../../draggable/events/drag-start');
+const Draggable = require('../../draggable/base');
 const Transition = require('./base');
 const Vector2d = require('../../../utils/math/geometry/vector-2d');
-const addEventListener = require('../../../utils/dom/event/add-event-listener');
 const cursor = require('../../../utils/cached-vectors/cursor');
+const eventHandler = require('../../../utils/event/event-handler');
 const getSign = require('../../../utils/math/get-sign');
 const getVisibleDistanceBetweenElements = require('../../../utils/dom/position/get-visible-distance-between-elements');
 const max = require('../../../utils/iterable/max');
@@ -22,35 +25,30 @@ class Slide extends Transition {
 
   init(target, carousel) {
     Slide.initPosition_(target, carousel);
-    Slide.initInteraction_(carousel);
-    renderLoop.mutate(() => Slide.render_(carousel));
+    Slide.initDraggableSlides_(carousel);
   }
 
-  static render_(carousel) {
-    renderLoop.measure(() => {
-      if (carousel.isBeingInteractedWith(SLIDE_INTERACTION)) {
-        const deltaX = cursor.getClient().getPressedFrameDelta().x;
-        if (deltaX) {
-          const translation = new Vector2d(deltaX, 0);
-          Slide.transition_(carousel.getActiveSlide(), carousel, translation);
-        }
-      }
-      renderLoop.mutate(() => Slide.render_(carousel));
-    });
+  static initDraggableSlides_(carousel) {
+    carousel.getSlides()
+      .forEach(
+        (slide) => {
+          const draggable = new Draggable(slide, {enableY: 0});
+          eventHandler.addListener(
+            draggable, DragStart, (event) => Slide.startInteraction_(carousel));
+          eventHandler.addListener(
+            draggable,
+            Drag,
+            (event) => Slide.handleDrag_(event, carousel));
+          eventHandler.addListener(
+            draggable, DragEnd, (event) => Slide.endInteraction_(carousel));
+        });
   }
 
-  static initInteraction_(carousel) {
-    addEventListener(
-      carousel.getContainer(),
-      EventType.CURSOR_DOWN,
-      () => carousel.startInteraction(SLIDE_INTERACTION));
-    addEventListener(
-      window,
-      EventType.CURSOR_UP,
-      () => Slide.finishSlideInteraction(carousel));
+  static startInteraction_(carousel) {
+    carousel.startInteraction(SLIDE_INTERACTION);
   }
 
-  static finishSlideInteraction(carousel) {
+  static endInteraction_(carousel) {
     carousel.endInteraction(SLIDE_INTERACTION);
     const gestureDistance = cursor.getClient().getPressedGestureDelta().x;
     if (Math.abs(gestureDistance) < GESTURE_MOVEMENT_THRESHOLD) {
@@ -63,6 +61,13 @@ class Slide extends Transition {
       carousel.transitionToSlide(
         filterFn(carousel.getVisibleSlides(), slideDistance));
     }
+  }
+
+  static handleDrag_(dragEvent, carousel) {
+    Slide.transitionBeforeSlides_(
+      dragEvent.getElement(), carousel, dragEvent.getDelta());
+    Slide.transitionAfterSlides_(
+      dragEvent.getElement(), carousel, dragEvent.getDelta());
   }
 
   static initPosition_(target, carousel) {
@@ -88,19 +93,28 @@ class Slide extends Transition {
 
   static transition_(activeSlide, carousel, translation) {
     Slide.transitionActiveSlide_(activeSlide, translation);
-    this.getHalfBeforeActiveSlide_(carousel, activeSlide).reduce(
-      (previousSlides, slide) => {
-        Slide.transitionBeforeSlide_(
-          slide, activeSlide, previousSlides, translation);
-        return [...previousSlides, slide];
-      }, []);
+    Slide.transitionBeforeSlides_(activeSlide, carousel, translation);
+    Slide.transitionAfterSlides_(activeSlide, carousel, translation);
+  }
 
-    this.getHalfAfterActiveSlide_(carousel, activeSlide).reduce(
-      (previousSlides, slide) => {
-        Slide.transitionAfterSlide_(
-          slide, activeSlide, previousSlides, translation);
-        return [...previousSlides, slide];
-      }, []);
+  static transitionBeforeSlides_(activeSlide, carousel, translation) {
+    this.getHalfBeforeActiveSlide_(carousel, activeSlide)
+      .reduce(
+        (previousSlides, slide) => {
+          Slide.transitionBeforeSlide_(
+            slide, activeSlide, previousSlides, translation);
+          return [...previousSlides, slide];
+        }, []);
+  }
+
+  static transitionAfterSlides_(activeSlide, carousel, translation) {
+    this.getHalfAfterActiveSlide_(carousel, activeSlide)
+      .reduce(
+        (previousSlides, slide) => {
+          Slide.transitionAfterSlide_(
+            slide, activeSlide, previousSlides, translation);
+          return [...previousSlides, slide];
+        }, []);
   }
 
   static transitionActiveSlide_(slide, translation) {
