@@ -28,7 +28,6 @@ class ContainerConstraint extends BaseConstraint {
     const clampedDistance =
       currentDistance.add(delta).clamp(...constrainedOverlap.asRanges());
 
-    console.log(constrainedOverlap.asRanges()[0], currentDistance.x);
     return clampedDistance.subtract(currentDistance);
   }
 }
