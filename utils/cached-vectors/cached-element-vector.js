@@ -22,7 +22,7 @@ class CachedElementVector {
     return this.cache_ || (
       this.cache_ =
         new MultiValueDynamicDefaultMap.usingFunction(
-          (...args) => new this(...args)));
+          (...args) => new this[Symbol.species](...args)));
   }
 
   static getVectorClass_() {
