@@ -1,8 +1,16 @@
+const DynamicDefaultMap = require('../map/dynamic-default');
 const MultiValueDynamicDefaultMap = require('../map/multi-value-dynamic-default');
 const Vector = require('../math/geometry/vector');
 const renderLoop = require('../render-loop');
 
 const VALUE_LIMIT = 2;
+
+const caches =
+  new DynamicDefaultMap.usingFunction(
+    (Class) => {
+      return new MultiValueDynamicDefaultMap.usingFunction(
+        (...args) => new Class(...args));
+    });
 
 class CachedElementVector {
   constructor(element = null, ...args) {
@@ -19,10 +27,7 @@ class CachedElementVector {
   }
 
   static getInstancesByElement_() {
-    return this.cache_ || (
-      this.cache_ =
-        new MultiValueDynamicDefaultMap.usingFunction(
-          (...args) => new this[Symbol.species](...args)));
+    return caches.get(this);
   }
 
   static getVectorClass_() {
