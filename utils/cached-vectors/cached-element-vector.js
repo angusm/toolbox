@@ -6,7 +6,7 @@ const VALUE_LIMIT = 2;
 
 class CachedElementVector {
   constructor(element = null) {
-    if (this.constructor.getInstancesByElement_().has(element)) {
+    if (this.constructor.getInstancesByElement_().has(...arguments)) {
       if (element) {
         console.error('Please use getForElement instead of new.');
       } else {
