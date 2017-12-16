@@ -4,7 +4,7 @@ const getVisibleDistanceBetweenElements = require('../dom/position/get-visible-d
 
 class VisibleDistance extends CachedElementVector {
   constructor(element, container = null) {
-    super(element);
+    super(element, container);
     this.container_ = container;
   }
 

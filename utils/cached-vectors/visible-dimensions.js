@@ -3,7 +3,7 @@ const getVisibleDimensions = require('../dom/position/get-visible-dimensions');
 
 class VisibleDimensions extends Dimensions {
   constructor(element, container = null) {
-    super(element);
+    super(element, container);
     this.container_ = container;
   }
 

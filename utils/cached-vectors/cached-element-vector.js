@@ -5,8 +5,8 @@ const renderLoop = require('../render-loop');
 const VALUE_LIMIT = 2;
 
 class CachedElementVector {
-  constructor(element = null) {
-    if (this.constructor.getInstancesByElement_().has(...arguments)) {
+  constructor(element = null, ...args) {
+    if (this.constructor.getInstancesByElement_().has(element, ...args)) {
       if (element) {
         console.error('Please use getForElement instead of new.');
       } else {
