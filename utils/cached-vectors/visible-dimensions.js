@@ -1,22 +1,18 @@
-const CachedElementVector = require('./cached-element-vector');
-const Dimensions2d = require('../math/geometry/dimensions-2d');
+const Dimensions = require('./dimensions');
 const getVisibleDimensions = require('../dom/position/get-visible-dimensions');
 
-class VisibleDimensions extends CachedElementVector {
-  constructor(element) {
-    super(element, Dimensions2d);
-  }
-
-  getDimensions() {
-    return this.getCurrentVector_();
+class VisibleDimensions extends Dimensions {
+  constructor(element, container) {
+    super(element);
+    this.container_ = container;
   }
 
   getFirstVectorValue_() {
-    return getVisibleDimensions(this.element_).width;
+    return getVisibleDimensions(this.element_, this.container_).width;
   }
 
   getSecondVectorValue_() {
-    return getVisibleDimensions(this.element_).height;
+    return getVisibleDimensions(this.element_, this.container_).height;
   }
 }
 

@@ -2,7 +2,6 @@ const Drag = require('./events/drag');
 const DragEnd = require('./events/drag-end');
 const DragStart = require('./events/drag-start');
 const EventType = require('../../utils/dom/event/event-type');
-const Vector2d = require('../../utils/math/geometry/vector-2d');
 const addDomEventListener = require('../../utils/dom/event/add-dom-event-listener');
 const cursor = require('../../utils/cached-vectors/cursor');
 const eventHandler = require('../../utils/event/event-handler');
@@ -10,11 +9,10 @@ const renderLoop = require('../../utils/render-loop');
 const translate2d = require('../../utils/dom/position/translate-2d');
 
 class Draggable {
-  constructor(element, {enableX = true, enableY = true} = {}) {
-    this.xEnabled_ = enableX;
-    this.yEnabled_ = enableY;
+  constructor(element, {constraints = []} = {}) {
     this.element_ = element;
     this.interacting_ = false;
+    this.constraints_ = [...constraints];
     this.init_();
   }
 
@@ -64,14 +62,13 @@ class Draggable {
   }
 
   getDelta_() {
-    let delta = cursor.getClient().getPressedFrameDelta();
-    if (!this.xEnabled_) {
-      delta = new Vector2d(0, delta.y);
-    }
-    if (!this.yEnabled_) {
-      delta = new Vector2d(delta.x, 0);
-    }
-    return delta;
+    return this.constraints_.reduce(
+      (delta, constraint) => constraint.constrainDelta(this, delta),
+      cursor.getClient().getPressedFrameDelta());
+  }
+
+  getElement() {
+    return this.element_;
   }
 }
 

@@ -1,10 +1,15 @@
 const CachedElementVector = require('./cached-element-vector');
 const Vector2d = require('../math/geometry/vector-2d');
-const getVisibleDistanceFromAncestor = require('../dom/position/get-visible-distance-from-ancestor');
+const getVisibleDistanceBetweenElements = require('../dom/position/get-visible-distance-between-elements');
 
 class VisibleDistance extends CachedElementVector {
-  constructor(element) {
-    super(element, Vector2d);
+  constructor(element, container = null) {
+    super(element);
+    this.container_ = container;
+  }
+
+  static getVectorClass_() {
+    return Vector2d;
   }
 
   getDistance() {
@@ -12,11 +17,11 @@ class VisibleDistance extends CachedElementVector {
   }
 
   getFirstVectorValue_() {
-    return getVisibleDistanceFromAncestor(this.element_).x;
+    return getVisibleDistanceBetweenElements(this.element_, this.container_).x;
   }
 
   getSecondVectorValue_() {
-    return getVisibleDistanceFromAncestor(this.element_).y;
+    return getVisibleDistanceBetweenElements(this.element_, this.container_).y;
   }
 }
 

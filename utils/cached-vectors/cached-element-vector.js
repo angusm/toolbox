@@ -1,11 +1,11 @@
-const DynamicDefaultMap = require('../map/dynamic-default');
+const MultiValueDynamicDefaultMap = require('../map/multi-value-dynamic-default');
 const Vector = require('../math/geometry/vector');
 const renderLoop = require('../render-loop');
 
 const VALUE_LIMIT = 2;
 
 class CachedElementVector {
-  constructor(element = null, VectorClass = Vector) {
+  constructor(element = null) {
     if (this.constructor.getInstancesByElement_().has(element)) {
       if (element) {
         console.error('Please use getForElement instead of new.');
@@ -13,19 +13,30 @@ class CachedElementVector {
         console.error('Please use getSingleton instead of new.');
       }
     }
-    this.VectorClass_ = VectorClass;
     this.element_ = element;
-    this.values_ = [new VectorClass()];
+    this.values_ = [new (this.getVectorClass_())()];
     this.init_();
   }
 
   static getInstancesByElement_() {
     return this.cache_ || (
       this.cache_ =
-        new DynamicDefaultMap.usingFunction((element) => new this(element)));
+        new MultiValueDynamicDefaultMap.usingFunction(
+          (...args) => new this(...args)));
+  }
+
+  static getVectorClass_() {
+    return Vector;
+  }
+
+  getVectorClass_() {
+    return this.constructor.getVectorClass_();
   }
 
   init_() {
+    // Init values so that instances can be created during a measure step if
+    // necessary.
+    renderLoop.measure(() => this.measureValues_());
     this.render_();
   }
 
@@ -42,17 +53,22 @@ class CachedElementVector {
   }
 
   getCurrentVector_() {
-    return new this.VectorClass_(
+    return new (this.getVectorClass_())(
       this.getFirstVectorValue_(), this.getSecondVectorValue_());
   }
 
   render_() {
     renderLoop.premeasure(() => {
-      this.values_ =
-        this.values_.slice(-(this.constructor.getValueLimit() - 1))
-          .concat([this.getCurrentVector_()]);
+      this.measureValues_();
       renderLoop.cleanup(() => this.render_());
     });
+  }
+
+  measureValues_() {
+    this.values_ =
+      this.values_
+        .slice(-(this.constructor.getValueLimit() - 1))
+        .concat([this.getCurrentVector_()]);
   }
 
   getCurrentAndLastValue_() {
@@ -60,19 +76,19 @@ class CachedElementVector {
   }
 
   getDelta() {
-    return this.VectorClass_.subtract(...this.getCurrentAndLastValue_());
+    return this.getVectorClass_().subtract(...this.getCurrentAndLastValue_());
   }
 
   hasChanged() {
-    return !this.VectorClass_.areEqual(...this.getCurrentAndLastValue_());
+    return !this.getVectorClass_().areEqual(...this.getCurrentAndLastValue_());
   }
 
   static getValueLimit() {
     return VALUE_LIMIT;
   }
 
-  static getForElement(element) {
-    return this.getInstancesByElement_().get(element);
+  static getForElement(...args) {
+    return this.getInstancesByElement_().get(...args);
   }
 
   static getSingleton() {

@@ -3,7 +3,11 @@ const Vector2d = require('../math/geometry/vector-2d');
 
 class Scroll extends CachedElementVector {
   constructor(element = null) {
-    super(element, Vector2d);
+    super(element);
+  }
+
+  static getVectorClass_() {
+    return Vector2d;
   }
 
   getPosition() {

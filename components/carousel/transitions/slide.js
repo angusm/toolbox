@@ -2,6 +2,7 @@ const Drag = require('../../draggable/events/drag');
 const DragEnd = require('../../draggable/events/drag-end');
 const DragStart = require('../../draggable/events/drag-start');
 const Draggable = require('../../draggable/base');
+const FixedYConstraint = require('../../draggable/constraints/fixed-y');
 const Transition = require('./base');
 const Vector2d = require('../../../utils/math/geometry/vector-2d');
 const cursor = require('../../../utils/cached-vectors/cursor');
@@ -32,7 +33,8 @@ class Slide extends Transition {
     carousel.getSlides()
       .forEach(
         (slide) => {
-          const draggable = new Draggable(slide, {enableY: 0});
+          const draggable =
+            new Draggable(slide, {constraints: [new FixedYConstraint()]});
           eventHandler.addListener(
             draggable, DragStart, (event) => Slide.startInteraction_(carousel));
           eventHandler.addListener(

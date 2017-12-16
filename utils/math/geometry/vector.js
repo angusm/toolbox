@@ -1,3 +1,4 @@
+const Range = require('../../range');
 const areListValuesEqual = require('../../iterable/are-list-values-equal');
 const sum = require('../sum');
 const zip = require('../../iterable/zip');
@@ -88,6 +89,11 @@ class Vector {
   getLength() {
     return Math.sqrt(
       sum(...this.getValues().map((value) => Math.pow(value, 2))));
+  }
+
+  asRanges() {
+    return this.getValues()
+      .map((value) => new Range(Math.min(0, value), Math.max(0, value)));
   }
 }
 

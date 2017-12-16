@@ -3,7 +3,11 @@ const Dimensions2d = require('../math/geometry/dimensions-2d');
 
 class Dimensions extends CachedElementVector {
   constructor(element = null) {
-    super(element, Dimensions2d);
+    super(element);
+  }
+
+  static getVectorClass_() {
+    return Dimensions2d;
   }
 
   getDimensions() {

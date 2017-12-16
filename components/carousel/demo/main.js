@@ -3,12 +3,10 @@ const CarouselNav = require('../nav');
 const CarouselTimer = require('../timer');
 const Fade = require('../transitions/fade');
 const Slide = require('../transitions/slide');
-const Wipe = require('../transitions/wipe');
 
 const selectorsAndTransitions = [
   ['.fade-demo', new Fade()],
   ['.slide-demo', new Slide()],
-  // ['.wipe-demo', new Wipe()],
 ];
 
 selectorsAndTransitions.forEach(
