@@ -5,7 +5,6 @@
  */
 const Dimensions = require('../cached-vectors/dimensions');
 const Dimensions2d = require('../math/geometry/dimensions-2d');
-const Range = require('../range');
 const Scroll = require('../cached-vectors/scroll');
 const VisibleDimensions = require('../cached-vectors/visible-dimensions');
 const VisibleDistance = require('../cached-vectors/visible-distance');
