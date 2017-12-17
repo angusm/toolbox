@@ -6,7 +6,7 @@ const renderLoop = require('../render-loop');
 const VALUE_LIMIT = 2;
 
 const caches =
-  new DynamicDefaultMap.usingFunction(
+  DynamicDefaultMap.usingFunction(
     (Class) => {
       return new MultiValueDynamicDefaultMap.usingFunction(
         (...args) => new Class(...args));
