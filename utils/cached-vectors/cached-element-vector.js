@@ -8,7 +8,7 @@ const VALUE_LIMIT = 2;
 const caches =
   DynamicDefaultMap.usingFunction(
     (Class) => {
-      return new MultiValueDynamicDefaultMap.usingFunction(
+      return MultiValueDynamicDefaultMap.usingFunction(
         (...args) => new Class(...args));
     });
 
