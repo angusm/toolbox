@@ -28,7 +28,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('css', () => {
-    return gulp.src('./main.scss')
+    return gulp.src('./main.sass')
         .pipe(sass()) // Converts Sass to CSS with gulp-sass
         .on('error', handleError)
         .pipe(gulp.dest('./dist'));
