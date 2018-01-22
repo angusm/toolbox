@@ -5,45 +5,46 @@ const DynamicDefaultMap = require('../../map/dynamic-default');
 // (note: not 64-bit specifically, but the 64th version/release of Chrome)
 
 const RESULT_KEY = Symbol('result');
-const cachedResult = new DynamicDefaultMap((val) => {
-  if (val !== RESULT_KEY) {
-    console.error('Browser check function called in unusual way.');
-  }
+const cachedResult = DynamicDefaultMap.usingFunction(
+  (val) => {
+    if (val !== RESULT_KEY) {
+      console.error('Browser check function called in unusual way.');
+    }
 
-  const table = document.createElement('div');
-  table.style.display = 'table';
-  const spacing = document.createElement('div');
-  spacing.style.display = 'table-row';
-  spacing.style.height = '200px';
-  const tableRow = document.createElement('div');
-  tableRow.style.display = 'table-row';
-  tableRow.style.position = 'relative';
-  const tableCell = document.createElement('div');
-  tableCell.style.display = 'table-cell';
-  const target = document.createElement('div');
-  target.style.display = 'inline-block';
-  target.style.height = '100px';
-  target.style.width = '100px';
-  table.appendChild(spacing);
-  table.appendChild(tableRow);
-  tableRow.appendChild(tableCell);
-  tableCell.appendChild(target);
+    const table = document.createElement('div');
+    table.style.display = 'table';
+    const spacing = document.createElement('div');
+    spacing.style.display = 'table-row';
+    spacing.style.height = '200px';
+    const tableRow = document.createElement('div');
+    tableRow.style.display = 'table-row';
+    tableRow.style.position = 'relative';
+    const tableCell = document.createElement('div');
+    tableCell.style.display = 'table-cell';
+    const target = document.createElement('div');
+    target.style.display = 'inline-block';
+    target.style.height = '100px';
+    target.style.width = '100px';
+    table.appendChild(spacing);
+    table.appendChild(tableRow);
+    tableRow.appendChild(tableCell);
+    tableCell.appendChild(target);
 
-  document.body.appendChild(table);
+    document.body.appendChild(table);
 
-  // Run the check
-  const result =
-    tableRow.offsetParent === table &&
-    tableRow.offsetTop === 200 &&
-    tableCell.offsetParent === tableRow &&
-    tableCell.offsetTop === 200 &&
-    target.offsetParent === tableRow &&
-    target.offsetTop === 200;
+    // Run the check
+    const result =
+      tableRow.offsetParent === table &&
+      tableRow.offsetTop === 200 &&
+      tableCell.offsetParent === tableRow &&
+      tableCell.offsetTop === 200 &&
+      target.offsetParent === tableRow &&
+      target.offsetTop === 200;
 
-  document.body.removeChild(table);
+    document.body.removeChild(table);
 
-  return result;
-});
+    return result;
+  });
 
 function browserHasChrome64TableDisplayOffsetIssues() {
     return cachedResult.get(RESULT_KEY);
