@@ -1,5 +1,6 @@
 const Matrix = require('../../dom/position/matrix');
 const Vector = require('./vector');
+const isTableDisplayed = require('../style/is-table-displayed');
 
 class Vector2d extends Vector {
     constructor(x = 0, y = 0) {
@@ -15,7 +16,13 @@ class Vector2d extends Vector {
     }
 
     static fromElementOffset(element) {
-        return new Vector2d(element.offsetLeft, element.offsetTop);
+        if (element.offsetParent && isTableDisplayed(element.offsetParent)) {
+            return new Vector2d(
+              element.offsetLeft - element.offsetParent.offsetLeft,
+              element.offsetTop - element.offsetParent.offsetTop);
+        } else {
+          return new Vector2d(element.offsetLeft, element.offsetTop);
+        }
     }
 
     static fromMatrix(matrix) {
