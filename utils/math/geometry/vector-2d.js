@@ -1,6 +1,6 @@
 const Matrix = require('../../dom/position/matrix');
 const Vector = require('./vector');
-const browserHasChrome64TableDisplayOffsetIssues = require('../style/browser-has-chrome64-table-display-offset-issues');
+const browserHasChrome64TableDisplayOffsetIssues = require('../../dom/style/browser-has-chrome64-table-display-offset-issues');
 const isTableDisplayed = require('../../dom/style/is-table-displayed');
 
 class Vector2d extends Vector {
