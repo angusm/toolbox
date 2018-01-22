@@ -1,5 +1,9 @@
 const DynamicDefaultMap = require('../../map/dynamic-default');
 
+// Checks for inconsistencies in offsets in the browser.
+// Triggered for an issue in the beta version of Chrome v64
+// (note: not 64-bit specifically, but the 64th version/release of Chrome)
+
 const RESULT_KEY = Symbol('result');
 const cachedResult = new DynamicDefaultMap((val) => {
   if (val !== RESULT_KEY) {
