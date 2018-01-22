@@ -1,5 +1,5 @@
 {
-  "name": "toolbox",
+  "name": "toolbox-experimental",
   "version": "1.0.24",
   "description": "Useful things in VanillaJS",
   "main": "index.js",
