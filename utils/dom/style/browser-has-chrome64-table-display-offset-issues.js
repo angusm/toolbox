@@ -13,6 +13,7 @@ const cachedResult = DynamicDefaultMap.usingFunction(
 
     const table = document.createElement('div');
     table.style.display = 'table';
+    tableRow.style.position = 'relative';
     const spacing = document.createElement('div');
     spacing.style.display = 'table-row';
     spacing.style.height = '200px';
