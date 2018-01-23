@@ -18,8 +18,8 @@ class Vector2d extends Vector {
 
   static fromElementOffset(element) {
     if (
-      element.offsetParent && isTableDisplayed(element.offsetParent) &&
-      browserHasChrome64TableDisplayOffsetIssues()
+      browserHasChrome64TableDisplayOffsetIssues() &&
+      element.offsetParent && isTableDisplayed(element.offsetParent)
     ) {
       return new Vector2d(
         element.offsetLeft - element.offsetParent.offsetLeft,
