@@ -14,9 +14,9 @@ class QueryParameters {
     }
   }
 
-  static setParameterByName(name, value, urlParam = null) {
+  static setParameterByName(name, value, updateOptions = {}) {
     // Cribbed from https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter
-    const url = urlParam || window.location.href;
+    const url = QueryParameters.getUrl_(updateOptions);
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     const separator = url.indexOf('?') !== -1 ? '&' : '?';
     let endResult;
@@ -26,10 +26,37 @@ class QueryParameters {
     else {
       endResult = url + separator + name + '=' + value;
     }
-    if (!urlParam) {
-      window.location.href = endResult;
-    }
+    QueryParameters.updateUrl(endResult, updateOptions);
     return endResult;
+  }
+
+  static deleteParameterByName(name, updateOptions = {}) {
+    const url = QueryParameters.getUrl_(updateOptions);
+    const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
+    let endResult;
+    if (url.match(re)) {
+      endResult = url.replace(re, '$1$2');
+    }
+    else {
+      endResult = url;
+    }
+    QueryParameters.updateUrl(endResult, updateOptions);
+    return endResult;
+  }
+
+  static getUrl_({urlParam = null} = {}) {
+    return urlParam || window.location.href;
+  }
+
+  static updateUrl(newUrl, {urlParam = null, reload = false} = {}) {
+    if (urlParam) {
+      return;
+    }
+    if (!reload) {
+      window.history.pushState({'path': newUrl}, '', newUrl)
+    } else {
+      window.location.href = newUrl;
+    }
   }
 }
 
