@@ -15,4 +15,4 @@ class QueryParameters {
   }
 }
 
-module.exports = new QueryParameters();
+module.exports = QueryParameters;
