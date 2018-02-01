@@ -1,7 +1,18 @@
+const MAPPINGS = [
+  [/ /g, '%20'],
+  [/[\[\]]/g, '\\$&'],
+];
+
 class QueryParameters {
   static getParameterByName(rawName, urlParam = null) {
+    console.log(QueryParameters.getParameterByName_(rawName, urlParam));
+    return QueryParameters.unescapeParamString_(
+      QueryParameters.getParameterByName_(rawName, urlParam));
+  }
+
+  static getParameterByName_(rawName, urlParam = null) {
     // Cribbed from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-    const name = QueryParameters.escapeParamKey_(rawName);
+    const name = QueryParameters.escapeParamString_(rawName);
     const url = urlParam || window.location.href;
     const parsedName = name.replace(/[\[\]]/g, '\\$&');
     const regex = new RegExp('[?&]' + parsedName + '(=([^&#]*)|&|#|$)');
@@ -15,9 +26,10 @@ class QueryParameters {
     }
   }
 
-  static setParameterByName(rawName, value, updateOptions = {}) {
+  static setParameterByName(rawName, rawValue, updateOptions = {}) {
     // Cribbed from https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter
-    const name = QueryParameters.escapeParamKey_(rawName);
+    const name = QueryParameters.escapeParamString_(rawName);
+    const value = QueryParameters.escapeParamString_(rawValue);
     QueryParameters.deleteParameterByName(name);
     const url = QueryParameters.getUrl_(updateOptions);
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
@@ -34,7 +46,7 @@ class QueryParameters {
   }
 
   static deleteParameterByName(rawName, updateOptions = {}) {
-    const name = QueryParameters.escapeParamKey_(rawName);
+    const name = QueryParameters.escapeParamString_(rawName);
     const url = QueryParameters.getUrl_(updateOptions);
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     let endResult;
@@ -48,9 +60,16 @@ class QueryParameters {
     return endResult;
   }
 
-  static escapeParamKey_(rawKey) {
-    return rawKey.replace(/ /g, '%20')
-      .replace(/[\[\]]/g, '\\$&');
+  static escapeParamString_(rawKey) {
+    return MAPPINGS.reduce(
+      (key, [find, sub]) => key.replace(find, sub),
+      rawKey);
+  }
+
+  static unescapeParamString_(rawKey) {
+    return MAPPINGS.reduce(
+      (key, [sub, find]) => key.replace(find, sub),
+      rawKey);
   }
 
   static getUrl_({urlParam = null} = {}) {
