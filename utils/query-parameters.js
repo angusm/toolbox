@@ -5,9 +5,8 @@ const MAPPINGS = [
 
 class QueryParameters {
   static getParameterByName(rawName, urlParam = null) {
-    console.log(QueryParameters.getParameterByName_(rawName, urlParam));
-    return QueryParameters.unescapeParamString_(
-      QueryParameters.getParameterByName_(rawName, urlParam));
+    const rawValue = QueryParameters.getParameterByName_(rawName, urlParam);
+    return rawValue ? QueryParameters.unescapeParamString_(rawValue) : rawValue;
   }
 
   static getParameterByName_(rawName, urlParam = null) {
@@ -36,7 +35,7 @@ class QueryParameters {
     const separator = url.indexOf('?') !== -1 ? '&' : '?';
     let endResult;
     if (url.match(re)) {
-      endResult = url.replace(re, '$1' + name + '=' + value + '$2');
+      endResult = url.replace(re, name + '=' + value + '$2');
     }
     else {
       endResult = url + separator + name + '=' + value;
@@ -51,7 +50,7 @@ class QueryParameters {
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     let endResult;
     if (url.match(re)) {
-      endResult = url.replace(re, '$1$2');
+      endResult = url.replace(re, '$1');
     }
     else {
       endResult = url;
