@@ -7,11 +7,11 @@ class QueryParameters {
   static getQueryParams(reload = {}) {
     const url = QueryParameters.getUrl_(reload);
 
-    if (url.indexOf('?') === -1) {
+    const queryParamString = url.split('?').slice(-1)[0];
+    if (url.indexOf('?') === -1 || !queryParamString) {
       return {};
     }
 
-    const queryParamString = url.split('?').slice(-1)[0];
     return queryParamString.split('&')
       .map((value) => value.split('='))
       .reduce(
@@ -46,7 +46,7 @@ class QueryParameters {
 
   static escapeParamString_(rawKey) {
     return MAPPINGS.reduce(
-      (key, [find, sub]) => key.replace(find, sub),
+      (key, [find, sub]) => key.replace(new RegExp(find, 'g'), sub),
       rawKey);
   }
 
@@ -56,7 +56,7 @@ class QueryParameters {
     }
 
     return MAPPINGS.reduce(
-      (key, [sub, find]) => key.replace(find, sub),
+      (key, [sub, find]) => key.replace(new RegExp(find, 'g'), sub),
       rawKey);
   }
 
