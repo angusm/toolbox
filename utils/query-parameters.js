@@ -48,14 +48,22 @@ class QueryParameters {
     return urlParam || window.location.href;
   }
 
-  static updateUrl(newUrl, {urlParam = null, reload = false} = {}) {
+  static updateUrl(fullUrl, {urlParam = null, reload = false} = {}) {
     if (urlParam) {
       return;
     }
+
+    const queryParams = fullUrl.split(window.location.pathname)[1];
+
     if (!reload) {
-      window.history.pushState({'path': newUrl}, '', newUrl)
+      window.history.pushState(
+        {'path': window.location.origin + window.location.pathname},
+        '',
+        queryParams);
     } else {
-      window.location.href = newUrl;
+      window.location.href =
+        [window.location.origin, window.location.pathname, queryParams]
+          .join('');
     }
   }
 }
