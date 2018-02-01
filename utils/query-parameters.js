@@ -50,7 +50,7 @@ class QueryParameters {
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     let endResult;
     if (url.match(re)) {
-      endResult = url.replace(re, '$1');
+      endResult = url.replace(re, '');
     }
     else {
       endResult = url;
