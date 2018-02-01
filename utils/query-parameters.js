@@ -1,6 +1,7 @@
 class QueryParameters {
-  static getParameterByName(name, urlParam = null) {
+  static getParameterByName(rawName, urlParam = null) {
     // Cribbed from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    const name = QueryParameters.escapeParamKey_(rawName);
     const url = urlParam || window.location.href;
     const parsedName = name.replace(/[\[\]]/g, '\\$&');
     const regex = new RegExp('[?&]' + parsedName + '(=([^&#]*)|&|#|$)');
@@ -14,8 +15,10 @@ class QueryParameters {
     }
   }
 
-  static setParameterByName(name, value, updateOptions = {}) {
+  static setParameterByName(rawName, value, updateOptions = {}) {
     // Cribbed from https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter
+    const name = QueryParameters.escapeParamKey_(rawName);
+    QueryParameters.deleteParameterByName(name);
     const url = QueryParameters.getUrl_(updateOptions);
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     const separator = url.indexOf('?') !== -1 ? '&' : '?';
@@ -30,7 +33,8 @@ class QueryParameters {
     return endResult;
   }
 
-  static deleteParameterByName(name, updateOptions = {}) {
+  static deleteParameterByName(rawName, updateOptions = {}) {
+    const name = QueryParameters.escapeParamKey_(rawName);
     const url = QueryParameters.getUrl_(updateOptions);
     const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
     let endResult;
@@ -42,6 +46,11 @@ class QueryParameters {
     }
     QueryParameters.updateUrl(endResult, updateOptions);
     return endResult;
+  }
+
+  static escapeParamKey_(rawKey) {
+    return rawKey.replace(/ /g, '%20')
+      .replace(/[\[\]]/g, '\\$&');
   }
 
   static getUrl_({urlParam = null} = {}) {
