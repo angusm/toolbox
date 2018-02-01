@@ -4,59 +4,39 @@ const MAPPINGS = [
 ];
 
 class QueryParameters {
-  static getParameterByName(rawName, urlParam = null) {
-    const rawValue = QueryParameters.getParameterByName_(rawName, urlParam);
-    return rawValue ? QueryParameters.unescapeParamString_(rawValue) : rawValue;
+  static getQueryParams(reload = {}) {
+    const url = QueryParameters.getUrl_(reload);
+    const queryParamString = url.split('?')[-1];
+    return queryParamString.split('&')
+      .map((value) => value.split('='))
+      .reduce(
+        (result, [key, value]) => {
+          result[key] = value;
+          return result;
+        },
+        {});
   }
 
-  static getParameterByName_(rawName, urlParam = null) {
+  static getParameterByName(rawName) {
     // Cribbed from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
     const name = QueryParameters.escapeParamString_(rawName);
-    const url = urlParam || window.location.href;
-    const parsedName = name.replace(/[\[\]]/g, '\\$&');
-    const regex = new RegExp('[?&]' + parsedName + '(=([^&#]*)|&|#|$)');
-    const results = regex.exec(url);
-    if (!results) {
-      return null;
-    } else if (!results[2]) {
-      return '';
-    } else {
-      return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
+    return QueryParameters.unescapeParamString_(
+      QueryParameters.getQueryParams()[name]);
   }
 
-  static setParameterByName(rawName, rawValue, updateOptions = {}) {
+  static setParameterByName(rawName, rawValue, reload = false) {
     // Cribbed from https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter
+    const queryParams = QueryParameters.getQueryParams(reload);
     const name = QueryParameters.escapeParamString_(rawName);
-    const value = QueryParameters.escapeParamString_(rawValue);
-    QueryParameters.deleteParameterByName(name);
-    const url = QueryParameters.getUrl_(updateOptions);
-    const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
-    const separator = url.indexOf('?') !== -1 ? '&' : '?';
-    let endResult;
-    if (url.match(re)) {
-      endResult = url.replace(re, name + '=' + value + '$2');
-    }
-    else {
-      endResult = url + separator + name + '=' + value;
-    }
-    QueryParameters.updateUrl(endResult, updateOptions);
-    return endResult;
+    queryParams[name] = QueryParameters.escapeParamString_(rawValue);
+    return QueryParameters.updateUrl(queryParams, reload);
   }
 
-  static deleteParameterByName(rawName, updateOptions = {}) {
+  static deleteParameterByName(rawName, reload = false) {
+    const queryParams = QueryParameters.getQueryParams();
     const name = QueryParameters.escapeParamString_(rawName);
-    const url = QueryParameters.getUrl_(updateOptions);
-    const re = new RegExp('([?&])' + name + '=.*?(&|$)', 'i');
-    let endResult;
-    if (url.match(re)) {
-      endResult = url.replace(re, '');
-    }
-    else {
-      endResult = url;
-    }
-    QueryParameters.updateUrl(endResult, updateOptions);
-    return endResult;
+    delete queryParams[name];
+    QueryParameters.updateUrl(queryParams, reload);
   }
 
   static escapeParamString_(rawKey) {
@@ -66,30 +46,33 @@ class QueryParameters {
   }
 
   static unescapeParamString_(rawKey) {
+    if (!rawKey) {
+      return rawKey;
+    }
+
     return MAPPINGS.reduce(
       (key, [sub, find]) => key.replace(find, sub),
       rawKey);
   }
 
-  static getUrl_({urlParam = null} = {}) {
-    return urlParam || window.location.href;
+  static getUrl_() {
+    return window.location.href;
   }
 
-  static updateUrl(fullUrl, {urlParam = null, reload = false} = {}) {
-    if (urlParam) {
-      return;
-    }
-
-    const queryParams = fullUrl.split(window.location.pathname)[1];
+  static updateUrl(queryParams, reload = false) {
+    const paramsString =
+      Object.keys(queryParams)
+        .map((key) => [key, queryParams[key]].join('='))
+        .join('&');
 
     if (!reload) {
       window.history.pushState(
         {'path': window.location.origin + window.location.pathname},
         '',
-        queryParams);
+        `?${paramsString}`);
     } else {
       window.location.href =
-        [window.location.origin, window.location.pathname, queryParams]
+        [window.location.origin, window.location.pathname, '?', paramsString]
           .join('');
     }
   }
