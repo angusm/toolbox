@@ -1,6 +1,5 @@
 const MAPPINGS = [
-  [/ /g, '%20'],
-  [/[\[\]]/g, '\\$&'],
+  [' ', '%20'],
 ];
 
 class QueryParameters {
