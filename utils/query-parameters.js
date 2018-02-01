@@ -6,7 +6,12 @@ const MAPPINGS = [
 class QueryParameters {
   static getQueryParams(reload = {}) {
     const url = QueryParameters.getUrl_(reload);
-    const queryParamString = url.split('?')[-1];
+
+    if (url.indexOf('?') === -1) {
+      return {};
+    }
+
+    const queryParamString = url.split('?').slice(-1)[0];
     return queryParamString.split('&')
       .map((value) => value.split('='))
       .reduce(
